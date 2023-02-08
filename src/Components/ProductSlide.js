@@ -14,6 +14,10 @@ export default function ProductSlide() {
     const [best, setBest] = useState([])
     const [loadingBest, setloadingBest] = useState(true)
 
+    const handleScroll = () => {
+        window.scrollTo(0, 400)
+    }
+
     const getTrend = () => {
         axios.get(`http://localhost/bukubook/api/bukuapi/trend`).then((res) => {
             setTrend(res.data.data)
@@ -35,14 +39,11 @@ export default function ProductSlide() {
     }
 
     useEffect(() => {
-        if(loadingBest === false || best.length === 0) {
+        if(best?.length < 1 || trend?.length < 1) {
             getBest()
-        }
-
-        if(loadingTrend === false || trend.length === 0) {
             getTrend()
         }
-    },[loadingBest, loadingTrend, best, trend])
+    },[best, trend])
 
     const trending =    loadingTrend ?
                         (
@@ -77,7 +78,7 @@ export default function ProductSlide() {
                                             }
                                         })}
                                         <ul className="card-product__imgOverlay">
-                                            <li key={`srctrend${index}`}><Link to={`/buku/${datrend.ID}`}><button><i className="ti-search"></i></button></Link></li>
+                                            <li key={`srctrend${index}`}><Link onClick={handleScroll} to={`/buku/${datrend.ID}`}><button><i className="ti-search"></i></button></Link></li>
                                             <li key={`spntrend${index}`}><button><i className="ti-shopping-cart"></i></button></li>
                                         </ul>
                                         </div>
@@ -123,7 +124,7 @@ export default function ProductSlide() {
                                         }
                                     })}
                                     <ul className="card-product__imgOverlay">
-                                        <li key={`srctrend${index}`}><Link to={`/buku/${dabest.ID}`}><button><i className="ti-search"></i></button></Link></li>
+                                        <li key={`srctrend${index}`}><Link onClick={handleScroll} to={`/buku/${dabest.ID}`}><button><i className="ti-search"></i></button></Link></li>
                                         <li key={`spntrend${index}`}><button><i className="ti-shopping-cart"></i></button></li>
                                     </ul>
                                     </div>

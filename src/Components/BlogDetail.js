@@ -1,10 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios'
+import { isEmpty } from 'lodash'
 import React, { Fragment, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 export default function BlogDetail() {
+	const [commentForm, setCommentForm] = useState('')
     const [blog, setBlog] = useState({})
     const [loadingBlog, setLoadingBlog] = useState(true)
     const [nextz, setNext] = useState({})
@@ -28,9 +32,60 @@ export default function BlogDetail() {
         })
     }
 
+	const handleComment = (e) => {
+		e.preventDefault()
+		var formData = new FormData(e.target)
+		const MySwal = withReactContent(Swal)
+		formData.append('AksesToken', localStorage.getItem('accesstoken'))
+		formData.append('BlogID', params.id)
+		axios.post('http://localhost/bukubook/api/komentarapi/send', formData).then((res) => {
+			if(res.data.status === 200) {
+				MySwal.fire({
+					title: 'Sukses',
+					text: 'Komentar berhasil dikirim',
+					icon: 'success'
+				}).then(() => {
+					getBlog()
+				})
+			} else {
+				MySwal.fire({
+					title: res.data.status,
+					text: res.data.message,
+					icon: 'error'
+				})
+			}
+		})
+	}
+
+	const setForm = () => {
+		let form
+		if(localStorage.getItem('LoginStatus') === 'false'){
+			form = (<div className="comment-form">
+				<h3>Login untuk mulai berkomentar</h3>
+				<a href="?" className="button button-postComment button--active" data-toggle="modal" data-target="#exampleModalCenter">Login</a>
+			</div>)
+		} else {
+			form = (<div className="comment-form">
+				<h4>Tinggalkan Komentar</h4>
+				<form onSubmit={handleComment}>
+					<div className="form-group">
+						<textarea required className="form-control mb-10" rows="5" name="Komentar" placeholder="Komentar..."></textarea>
+					</div>
+					<button type='submit' className='button button-postComment button--active'>Kirim</button>
+				</form>
+			</div>)
+		}
+
+		setCommentForm(form)
+			
+	}
+
     useEffect(() => {
-        getBlog()
-    },[params.id])
+		if(isEmpty(blog)) {
+			getBlog()
+		}
+		setForm()
+    },[params.id, localStorage.getItem('LoginStatus')])
 
     let prev;
     if(prevz?.ID !== 0) {
@@ -58,6 +113,42 @@ export default function BlogDetail() {
                 </Fragment>
         )
     }
+
+	let comment = 	loadingBlog ?
+					(
+						''
+					)
+					:
+					blog?.Komentar.map((komen, index) => {
+						let profile
+						if(komen.UserProfile === null) {
+							profile = (<img src="/img/blog/blank-profile-picture-973460_1280.webp" alt="" width={100} height={100}/>)
+						} else {
+							profile = (<img src={komen.UserProfile} alt="" width={100} height={100}/>)
+						}
+		
+						return(
+							<div className="comment-list" key={`komentar${index}id${blog?.ID}`}>
+								<div className="single-comment justify-content-between d-flex">
+									<div className="user justify-content-between d-flex">
+										<div className="thumb">
+											{profile}
+										</div>
+										<div className="desc">
+											<h5>
+												<p>{komen.UserNama}</p>
+											</h5>
+											<p className="date">{komen.Tanggal}</p>
+											<p className="comment">
+												{komen.Komentar}
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						)
+					})
+
     let next;
     if(nextz?.ID !== 0) {
         next = loadingBlog ?
@@ -142,134 +233,10 @@ export default function BlogDetail() {
 				</div>
             </div>
             <div className="comments-area">
-				<h4>05 Comments</h4>
-				<div className="comment-list">
-					<div className="single-comment justify-content-between d-flex">
-						<div className="user justify-content-between d-flex">
-							<div className="thumb">
-								<img src="/img/blog/c1.jpg" alt=""/>
-							</div>
-							<div className="desc">
-								<h5>
-										<a href="?">Emilly Blunt</a>
-								</h5>
-								<p className="date">December 4, 2017 at 3:12 pm </p>
-								<p className="comment">
-										Never say goodbye till the end comes!
-								</p>
-							</div>
-						</div>
-						<div className="reply-btn">
-							<a href="?" className="btn-reply text-uppercase">reply</a>
-						</div>
-					</div>
-				</div>
-				<div className="comment-list left-padding">
-					<div className="single-comment justify-content-between d-flex">
-						<div className="user justify-content-between d-flex">
-							<div className="thumb">
-								<img src="/img/blog/c2.jpg" alt=""/>
-							</div>
-							<div className="desc">
-								<h5>
-										<a href="?">Elsie Cunningham</a>
-								</h5>
-								<p className="date">December 4, 2017 at 3:12 pm </p>
-								<p className="comment">
-										Never say goodbye till the end comes!
-								</p>
-							</div>
-						</div>
-						<div className="reply-btn">
-							<a href="?" className="btn-reply text-uppercase">reply</a>
-						</div>
-					</div>
-				</div>
-				<div className="comment-list left-padding">
-					<div className="single-comment justify-content-between d-flex">
-						<div className="user justify-content-between d-flex">
-							<div className="thumb">
-								<img src="/img/blog/c3.jpg" alt=""/>
-							</div>
-							<div className="desc">
-								<h5>
-										<a href="?">Annie Stephens</a>
-								</h5>
-								<p className="date">December 4, 2017 at 3:12 pm </p>
-								<p className="comment">
-										Never say goodbye till the end comes!
-								</p>
-							</div>
-						</div>
-						<div className="reply-btn">
-								<a href="?" className="btn-reply text-uppercase">reply</a>
-						</div>
-					</div>
-				</div>
-				<div className="comment-list">
-					<div className="single-comment justify-content-between d-flex">
-						<div className="user justify-content-between d-flex">
-							<div className="thumb">
-								<img src="/img/blog/c4.jpg" alt=""/>
-							</div>
-							<div className="desc">
-								<h5>
-									<a href="?">Maria Luna</a>
-								</h5>
-								<p className="date">December 4, 2017 at 3:12 pm </p>
-								<p className="comment">
-										Never say goodbye till the end comes!
-								</p>
-							</div>
-						</div>
-						<div className="reply-btn">
-							<a href="?" className="btn-reply text-uppercase">reply</a>
-						</div>
-					</div>
-				</div>
-				<div className="comment-list">
-					<div className="single-comment justify-content-between d-flex">
-						<div className="user justify-content-between d-flex">
-							<div className="thumb">
-								<img src="/img/blog/c5.jpg" alt=""/>
-							</div>
-							<div className="desc">
-								<h5>
-										<a href="?">Ina Hayes</a>
-								</h5>
-								<p className="date">December 4, 2017 at 3:12 pm </p>
-								<p className="comment">
-										Never say goodbye till the end comes!
-								</p>
-							</div>
-						</div>
-						<div className="reply-btn">
-								<a href="?" className="btn-reply text-uppercase">reply</a>
-						</div>
-					</div>
-				</div>
+				{loadingBlog ? <h4><Skeleton width={120}/></h4> : <h4>{blog?.JumlahKomen} Komentar</h4>}
+				{comment}
             </div>
-            <div className="comment-form">
-                    <h4>Leave a Reply</h4>
-                    <form>
-                            <div className="form-group form-inline">
-                                    <div className="form-group col-lg-6 col-md-6 name">
-                                            <input type="text" className="form-control" id="name" placeholder="Enter Name"/>
-                                    </div>
-                                    <div className="form-group col-lg-6 col-md-6 email">
-                                            <input type="email" className="form-control" id="email" placeholder="Enter email address"/>
-                                    </div>
-                            </div>
-                            <div className="form-group">
-                                    <input type="text" className="form-control" id="subject" placeholder="Subject"/>
-                            </div>
-                            <div className="form-group">
-                                    <textarea className="form-control mb-10" rows="5" name="message" placeholder="Messege"
-                                            required=""></textarea>
-                            </div>
-                            <a href="?" className="button button-postComment button--active">Post Comment</a>
-                    </form>
-            </div>
+			{commentForm}
         </div>
     )
 }

@@ -444,7 +444,7 @@ export default function Katalog() {
                             <h1>Katalog Buku</h1>
                             <nav aria-label="breadcrumb" className="banner-breadcrumb">
                                 <ol className="breadcrumb">
-                                    <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+                                    <li className="breadcrumb-item"><Link to="/">Beranda</Link></li>
                                     <li className="breadcrumb-item active" aria-current="page">Katalog</li>
                                 </ol>
                             </nav>
