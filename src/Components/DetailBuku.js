@@ -2,13 +2,65 @@ import axios from 'axios'
 import React, { Fragment, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Link, useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 import { SwiperSlide, Swiper } from 'swiper/react'
 
 export default function DetailBuku() {
     const [DataBuku, setDataBuku] = useState([])
     const [loadingDataBuku, setLoadingDataBuku] = useState(true)
+    const [qty, setQty] = useState(1)
     const param = useParams()
     
+    const handleUp = () => {
+        if(qty === DataBuku[0]?.Stok) {
+            setQty(DataBuku[0]?.Stok)
+        } else {
+            setQty(qty + 1)
+        }
+    }
+
+    const handleDown = () => {
+        if(qty === 1) {
+            setQty(1)
+        } else {
+            setQty(qty - 1)
+        }
+    }
+
+    const handleChange = (e) => {
+        if(e.target.value < 1) {
+            setQty(1)
+        } else if(e.target.value > DataBuku[0]?.Stok) {
+            setQty(DataBuku[0]?.Stok)
+        } else {
+            setQty(e.target.value)
+        }
+    }
+
+    const handleAdd = () => {
+        const MySwal = withReactContent(Swal)
+        var formData = new FormData()
+        formData.append('AksesToken', localStorage.getItem('accesstoken'))
+        formData.append('id', DataBuku[0]?.ID)
+        formData.append('qty', qty)
+        axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
+            if(res.data.status === 200) {
+                MySwal.fire({
+                    title: 'Berhasil menambahkan',
+                    text: 'Kamu bisa mengecek barangmu di keranjang',
+                    icon: 'success'
+                })
+            } else {
+                MySwal.fire({
+                    title: res.data.status,
+                    text: res.data.message,
+                    icon: 'error'
+                })
+            }
+        })
+    }
+
     const getData = () => {
         axios.get(`http://localhost/bukubook/api/bukuapi/get/${param.id}`).then((res) => {
             setDataBuku(res.data.data)
@@ -75,11 +127,11 @@ export default function DetailBuku() {
                                 </ul>
                                 <div className="pcount my-2">
                                     <label htmlFor="qty">Quantity:</label>
-                                    <button className="" type="button"><i className="ti-angle-left"></i></button>
-                                    <input type="text" name="qty" id="sst" size="2" maxlength="12" value="1" title="Quantity:" className="input-text qty"/>
-                                    <button className="" type="button"><i className="ti-angle-right"></i></button>
+                                    <button className="" type="button" onClick={handleDown}><i className="ti-angle-left"></i></button>
+                                    <input onChange={handleChange} type="number" name="qty" id="sst" size="2" maxlength="12" value={qty} title="Quantity:" className="input-text qty"/>
+                                    <button className="" type="button" onClick={handleUp}><i className="ti-angle-right"></i></button>
                                 </div>
-                                <a className="button primary-btn" href="?">Add to Cart</a>               
+                                <button onClick={handleAdd} className="button primary-btn">Add to Cart</button>               
                             </div>
                         </div>
                     </div>

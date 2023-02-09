@@ -16,6 +16,10 @@ export default function BlogList() {
     const param = useLocation().search
     const link = new URLSearchParams(param)
 
+    const handleScroll = () => {
+        window.scrollTo(0, 400)
+    }
+
     const getBlog = () => {
         if(link.get('kategori') !== null) {
             axios.get('http://localhost/bukubook/api/articleapi/get/?kategori='+link.get('kategori')).then((res) => {
@@ -28,21 +32,21 @@ export default function BlogList() {
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                        <Link onClick={handleScroll} to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link to={`/blog/?penulis=${blogd.Penulis}`}>{blogd.Penulis}
+                                            <Link onClick={handleScroll} to={`/blog/?penulis=${blogd.Penulis}`}>{blogd.Penulis}
                                                 <i className="lnr lnr-user"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
                                                 <i className="lnr lnr-calendar-full"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`/blog/${blogd.ID}`}>06 Comments
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.JumlahKomen} Komentar
                                                 <i className="lnr lnr-bubble"></i>
                                             </Link>
                                         </li>
@@ -53,11 +57,11 @@ export default function BlogList() {
                                 <div className="blog_post">
                                     <img src={blogd.Gambar} alt=""/>
                                     <div className="blog_details">
-                                        <Link to={`/blog/${blogd.ID}`}>
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
                                             <h2>{blogd.Judul}</h2>
                                         </Link>
                                         <p>{blogd.Teaser}</p>
-                                        <Link className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
+                                        <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
                                     </div>
                                 </div>
                             </div>
@@ -81,21 +85,21 @@ export default function BlogList() {
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                        <Link onClick={handleScroll} to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link to={`/blog/${blogd.ID}`}>{blogd.Penulis}
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Penulis}
                                                 <i className="lnr lnr-user"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
                                                 <i className="lnr lnr-calendar-full"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`/blog/${blogd.ID}`}>06 Comments
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.JumlahKomen} Komentar
                                                 <i className="lnr lnr-bubble"></i>
                                             </Link>
                                         </li>
@@ -106,11 +110,11 @@ export default function BlogList() {
                                 <div className="blog_post">
                                     <img src={blogd.Gambar} alt=""/>
                                     <div className="blog_details">
-                                        <Link to={`/blog/${blogd.ID}`}>
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
                                             <h2>{blogd.Judul}</h2>
                                         </Link>
                                         <p>{blogd.Teaser}</p>
-                                        <Link className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
+                                        <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
                                     </div>
                                 </div>
                             </div>
@@ -133,21 +137,21 @@ export default function BlogList() {
                         <div className="col-md-3">
                             <div className="blog_info text-right">
                                 <div className="post_tag">
-                                    <Link to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                    <Link onClick={handleScroll} to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
                                 </div>
                                 <ul className="blog_meta list">
                                     <li>
-                                        <Link to={`/blog/${blogd.ID}`}>{blogd.Penulis}
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Penulis}
                                             <i className="lnr lnr-user"></i>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
                                             <i className="lnr lnr-calendar-full"></i>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link to={`/blog/${blogd.ID}`}>06 Comments
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.JumlahKomen} Komentar
                                             <i className="lnr lnr-bubble"></i>
                                         </Link>
                                     </li>
@@ -158,11 +162,11 @@ export default function BlogList() {
                             <div className="blog_post">
                                 <img src={blogd.Gambar} alt=""/>
                                 <div className="blog_details">
-                                    <Link to={`/blog/${blogd.ID}`}>
+                                    <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
                                         <h2>{blogd.Judul}</h2>
                                     </Link>
                                     <p>{blogd.Teaser}</p>
-                                    <Link className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
+                                    <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
                                 </div>
                             </div>
                         </div>
@@ -194,19 +198,19 @@ export default function BlogList() {
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link to={`?`}><Skeleton width={70} /></Link>
+                                        <Link onClick={handleScroll} to={`?`}><Skeleton width={70} /></Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link to={`?`}><Skeleton width={120} />
+                                            <Link onClick={handleScroll} to={`?`}><Skeleton width={120} />
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`?`}><Skeleton width={120} />
+                                            <Link onClick={handleScroll} to={`?`}><Skeleton width={120} />
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link to={`?`}><Skeleton width={120} />
+                                            <Link onClick={handleScroll} to={`?`}><Skeleton width={120} />
                                             </Link>
                                         </li>
                                     </ul>
@@ -216,11 +220,11 @@ export default function BlogList() {
                                 <div className="blog_post">
                                     <Skeleton width={540} height={360} />
                                     <div className="blog_details">
-                                        <Link to={`?`}>
+                                        <Link onClick={handleScroll} to={`?`}>
                                             <h2><Skeleton width={150} /></h2>
                                         </Link>
                                         <p><Skeleton count={3} /></p>
-                                        <Link className="button button-blog" to={`?`}>Selengkapnya</Link>
+                                        <Link onClick={handleScroll} className="button button-blog" to={`?`}>Selengkapnya</Link>
                                     </div>
                                 </div>
                             </div>

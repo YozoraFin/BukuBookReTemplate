@@ -51,6 +51,12 @@ export default function Contact() {
                     })
                 }
             })            
+        } else {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Robot?',
+                text: 'Tolong isi ReCaptcha terlebih dahulu'
+            })
         }
 
     }

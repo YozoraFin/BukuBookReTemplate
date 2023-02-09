@@ -9,6 +9,8 @@ import Skeleton from "react-loading-skeleton";
 import ReactPaginate from "react-paginate";
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import Select from 'react-select';
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 export default function Katalog() {
     const [bukuList, setBukuList] = useState([])
@@ -42,13 +44,44 @@ export default function Katalog() {
     const separator = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     const navigate = useNavigate()
 
+    const handleChange = () => {
+
+    }
+
+    const handleScroll = () => {
+        window.scrollTo(0, 400)
+    }
+
+    const handleAdd = (e) => {
+        const MySwal = withReactContent(Swal)
+        var formData = new FormData()
+        formData.append('AksesToken', localStorage.getItem('accesstoken'))
+        formData.append('id', e.target.id)
+        formData.append('qty', 1)
+        axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
+            if(res.data.status === 200) {
+                MySwal.fire({
+                    title: 'Buku Berhasil Ditambahkan',
+                    text: 'Kamu bisa melihat barangmu di keranjang',
+                    icon: 'success'
+                })
+            } else {
+                MySwal.fire({
+                    title: res.data.status,
+                    text: res.data.message,
+                    icon: 'error'
+                })
+            }
+        })
+    }
+
     const handleGenre = (e) => {
-        if(e.target.value === link.get('genre')) {
+        if(e.target.id === link.get('genre')) {
             navigate(`/katalog?${qSort.current}${qKeyword.current}${qMax.current}${qMin.current}`)
             qGenre.current = ''
         } else {
-            navigate(`/katalog?${qSort.current}${qKeyword.current}&genre=${e.target.value}${qMax.current}${qMin.current}`)
-            qGenre.current = `&genre=${e.target.value}`
+            navigate(`/katalog?${qSort.current}${qKeyword.current}&genre=${e.target.id}${qMax.current}${qMin.current}`)
+            qGenre.current = `&genre=${e.target.id}`
         }
     }
     
@@ -182,13 +215,13 @@ export default function Katalog() {
                                 }
                             })}
                             <ul className="card-product__imgOverlay">
-                            <li><Link to={`/buku/${bukud.ID}`}><button><i className="ti-search"></i></button></Link></li>
-                            <li><button><i className="ti-shopping-cart"></i></button></li>
+                            <li><Link onClick={handleScroll} to={`/buku/${bukud.ID}`}><button><i className="ti-search"></i></button></Link></li>
+                            <li><button onClick={handleAdd} id={bukud.ID}><i id={bukud.ID} className="ti-shopping-cart"></i></button></li>
                             </ul>
                         </div>
                         <div className="card-body">
                             <p>{bukud.Penulis}</p>
-                            <h4 className="card-product__title"><Link to={`/buku/${bukud.ID}`}>{bukud.Judul}</Link></h4>
+                            <h4 className="card-product__title"><Link onClick={handleScroll} to={`/buku/${bukud.ID}`}>{bukud.Judul}</Link></h4>
                             <p className="card-product__price">{bukud.Harga}</p>
                         </div>
                     </div>
@@ -368,7 +401,7 @@ export default function Katalog() {
                     genreList?.map((genre, index) => {
                         const isCheked = genre.Genre === link.get('genre')
                         return(
-                            <li className="filter-list" onClick={handleGenre} key={`genre${index}`}><input className="pixel-radio" checked={isCheked}  type="radio" id={genre.Genre} name="brand" value={genre.Genre} /><label htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Jumlah})</span></label></li>
+                            <li className="filter-list" key={`genre${index}`}><input onClick={handleGenre} onChange={handleChange} className="pixel-radio" id={genre.Genre} checked={isCheked}  type="radio" name="brand"/><label id={genre.Genre} htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Jumlah})</span></label></li>
                         )
                     })
 
@@ -380,7 +413,7 @@ export default function Katalog() {
                     genreList?.map((genre, index) => {
                         const isCheked = genre.Genre === link.get('genre')
                         return(
-                            <li onClick={handleGenre} className="filter-list" key={`rgenre${index}`}><input className="pixel-radio" checked={isCheked}  type="radio" id={genre.Genre} name="brand" value={genre.Genre} /><label htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Jumlah})</span></label></li>
+                            <li className="filter-list" key={`rgenre${index}`}><input onClick={handleGenre} onChange={handleChange} className="pixel-radio" checked={isCheked}  type="radio" name="brand" id={genre.Genre} /><label id={genre.Genre} htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Jumlah})</span></label></li>
                         )
                     })
     let filter
@@ -555,7 +588,10 @@ export default function Katalog() {
                                     nextLinkClassName={'page-link grmt'}
                                     previousClassName={'page-item'}
                                     previousLinkClassName={'page-link grmt'}
-                                    activeClassName={"active"}/> : ''}
+                                    activeClassName={"active"}
+                                    onClick={handleScroll}
+                                    /> : ''}
+                                    
                             </nav>
                         </div>
                     </section>

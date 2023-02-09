@@ -8,6 +8,7 @@ import DetailBuku from './Components/DetailBuku'
 import Empty from './Components/Empty'
 import Footer from './Components/Footer'
 import Header from './Components/Header'
+import History from './Components/History'
 import Katalog from './Components/Katalog'
 import Login from './Components/Login'
 import Main from './Components/Main'
@@ -19,19 +20,20 @@ export default function App() {
         <div>
             <Header/>
                 <Routes>
-                    <Route exact index element={<Main/>} />
                     <Route exact path='/katalog' element={<Katalog/>} />
                     <Route exact path='/blog' element={<Blog/>}>
                         <Route exact index element={<BlogList/>} />
                         <Route exact path='/blog/:id' element={<BlogDetail/>}/>
                     </Route>
                     <Route exact path='/profil' element={<Profile/>}>
-                        <Route exact index element={<DashBoard/>}/> 
+                        <Route exact index element={<DashBoard/>}/>
+                        <Route exact path='/profil/riwayat' element={<History/>} />  
                     </Route>
                     <Route exact path='/contact' element={<Contact/>}/>
                     <Route exact path='/buku/:id' element={<DetailBuku/>} />
                     <Route exact path='/login' element={<Login/>} />
                     <Route exact path='/register' element={<Register/>} /> 
+                    <Route exact index element={<Main/>} />
                     <Route exact path='/*' element={<Empty/>}/>
                 </Routes>
             <Footer/>

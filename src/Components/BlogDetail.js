@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios'
-import { isEmpty } from 'lodash'
 import React, { Fragment, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+
 
 export default function BlogDetail() {
 	const [commentForm, setCommentForm] = useState('')
@@ -15,6 +15,10 @@ export default function BlogDetail() {
     const [prevz, setPrevz] = useState({})
     const params = useParams()
     const navigate = useNavigate()
+
+	const handleScroll = () => {
+		window.scrollTo(0, 400)
+	}
 
     const getBlog = () => {
         axios.get(`http://localhost/bukubook/api/articleapi/get/${params.id}`).then((res) => {
@@ -62,7 +66,7 @@ export default function BlogDetail() {
 		if(localStorage.getItem('LoginStatus') === 'false'){
 			form = (<div className="comment-form">
 				<h3>Login untuk mulai berkomentar</h3>
-				<a href="?" className="button button-postComment button--active" data-toggle="modal" data-target="#exampleModalCenter">Login</a>
+				<Link onClick={handleScroll} to={'/login'} className="button button-postComment button--active" data-toggle="modal" data-target="#exampleModalCenter">Login</Link>
 			</div>)
 		} else {
 			form = (<div className="comment-form">
@@ -81,11 +85,9 @@ export default function BlogDetail() {
 	}
 
     useEffect(() => {
-		if(isEmpty(blog)) {
-			getBlog()
-		}
+		getBlog()
 		setForm()
-    },[params.id, localStorage.getItem('LoginStatus')])
+    },[params])
 
     let prev;
     if(prevz?.ID !== 0) {
@@ -95,18 +97,13 @@ export default function BlogDetail() {
                 (
                 <Fragment>
 					<div className="thumb">
-						<Link to={`/blog/${prevz.ID}`}>
+						<Link onClick={handleScroll} to={`/blog/${prevz.ID}`}>
 							<img className="img-fluid" src={prevz.Gambar} alt="" width={60} height={60} />
-						</Link>
-					</div>
-					<div className="arrow">
-						<Link to={`/blog/${prevz.ID}`}>
-							<span className="lnr text-white lnr-arrow-left"></span>
 						</Link>
 					</div>
 					<div className="detials">
 						<p>Postingan Sebelumnya</p>
-						<Link to={`/blog/${prevz.ID}`}>
+						<Link onClick={handleScroll} to={`/blog/${prevz.ID}`}>
 							<h4>{prevz.Judul}</h4>
 						</Link>
 					</div>
@@ -158,17 +155,12 @@ export default function BlogDetail() {
                 <Fragment>
 					<div className="detials">
 						<p>Postingan Selanjutnya</p>
-						<Link to={`/blog/${nextz.ID}`}>
+						<Link onClick={handleScroll} to={`/blog/${nextz.ID}`}>
 							<h4>{nextz.Judul}</h4>
 						</Link>
 					</div>
-					<div className="arrow">
-						<Link to={`/blog/${nextz.ID}`}>
-							<span className="lnr text-white lnr-arrow-right"></span>
-						</Link>
-					</div>
 					<div className="thumb">
-						<Link to={`/blog/${nextz.ID}`}>
+						<Link onClick={handleScroll} to={`/blog/${nextz.ID}`}>
 							<img className="img-fluid" src={nextz.Gambar} alt="" width={60} height={60} />
 						</Link>
 					</div>
@@ -187,7 +179,7 @@ export default function BlogDetail() {
                 <div className="col-lg-3  col-md-3">
 					<div className="blog_info text-right">
 						<div className="post_tag">
-								{loadingBlog ? <Skeleton width={60} /> : <a href="?">{blog?.Kategori}</a>}
+								{loadingBlog ? <Skeleton width={60} /> : <a>{blog?.Kategori}</a>}
 						</div>
 						<ul className="blog_meta list">
 							<li>
@@ -199,18 +191,13 @@ export default function BlogDetail() {
 							</li>
 							<li>
 								{loadingBlog ? <Skeleton width={108}/> : 
-									<a href="?">{blog?.Tanggal}
+									<a>{blog?.Tanggal}
 											<i className="lnr lnr-calendar-full"></i>
 									</a>
 								}
 							</li>
 							<li>
-								<a href="?">1.2M Views
-									<i className="lnr lnr-eye"></i>
-								</a>
-							</li>
-							<li>
-								<a href="?">06 Comments
+								<a>{blog?.JumlahKomen} Komentar
 										<i className="lnr lnr-bubble"></i>
 								</a>
 							</li>

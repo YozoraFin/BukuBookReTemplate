@@ -2,6 +2,14 @@
     color: #384aeb !important;
 }
 
+.real-active {
+    color: #384aeb !important;
+}
+
+.btnprofile {
+    color: #555;
+}
+
 iframe {
     width: 100%;
     height: 420px;
@@ -209,14 +217,17 @@ html {
     object-fit: cover;
   }
 
-.login_box_area .login_box_img {
-    min-height: 770px !important;
+@media screen and (min-width:1000px) {
+    .login_box_area .login_box_img {
+        min-height: 770px !important;
+    }
 }
 
 .dashwrap {
     position: relative;
     height: 250px;
     background-color: rgba(255, 255, 255, 0.504);
+    
 }
 
 .imagecustomer {
@@ -239,9 +250,11 @@ html {
 }
 
 .backgroundtop img {
-    width: 800px;
+    width: 100%;
     height: 200px;
     position: absolute;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
 }
 
 .nama {
@@ -249,6 +262,56 @@ html {
     color: #384aeb;
 }
 
-button .edit {
-    border-radius: 3px !important;
+.profilecontent {
+    min-height: 550px;
 }
+
+input[type="number"] {
+    -webkit-appearance: textfield !important;
+    -moz-appearance: textfield !important;
+    appearance: textfield !important;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+}
+
+@media screen and (max-width:1000px) {
+    #bestSellerCarousel .owl-next {
+        position: absolute;
+        top: 30%;
+        transform: translateY(-30%);
+        right: -50px;
+    }
+
+    #bestSellerCarousel .owl-prev {
+        position: absolute;
+        top: 30%;
+        transform: translateY(-30%);
+        left: -50px;
+    }
+}
+
+@media screen and (max-width:768px) {
+    #bestSellerCarousel .owl-next {
+        position: absolute;
+        top: 30%;
+        transform: translateY(-30%);
+        right: -50px;
+        display: none;
+    }
+
+    #bestSellerCarousel .owl-prev {
+        position: absolute;
+        top: 30%;
+        transform: translateY(-30%);
+        left: -50px;
+        display: none;
+    }
+
+    .login-box-area .login-box-img {
+        height: 200px !important;
+    }
+}
+

@@ -12,6 +12,10 @@ export default function Blog() {
     const param = useLocation().search
     const link = new URLSearchParams(param)
 
+    const handleScroll = () => {
+        window.scrollTo(0, 400)
+    }
+
     const getBlog = () => {
         axios.get('http://localhost/bukubook/api/articleapi/get').then((res) => {
             setBlog(res.data.data)
@@ -64,7 +68,7 @@ export default function Blog() {
                         kategori?.map((kategorid, index) => {
                             return(
                                 <li key={`kategori${index}`}>
-                                    <Link to={`/blog?kategori=${kategorid.Kategori}`} className="d-flex justify-content-between">
+                                    <Link onClick={handleScroll} to={`/blog?kategori=${kategorid.Kategori}`} className="d-flex justify-content-between">
                                         <p>{kategorid.Kategori}</p>
                                         <p>{kategorid.Jumlah}</p>
                                     </Link>
@@ -120,7 +124,7 @@ export default function Blog() {
                                 <div className="media post_item" key={`lbside${index}`}>
                                     <img src={blogd.Gambar} alt="post" width={120} height={60}/>
                                     <div className="media-body">
-                                        <Link to={`/blog/${blogd.ID}`}>
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
                                             <h3>{blogd.Judul}</h3>
                                         </Link>
                                         <p>{blogd.Tanggal}</p>
@@ -139,8 +143,8 @@ export default function Blog() {
                     <h1>Artikel</h1>
                     <nav aria-label="breadcrumb" className="banner-breadcrumb">
                         <ol className="breadcrumb">
-                        <li className="breadcrumb-item"><Link to={'/'}>Beranda</Link></li>
-                        {link.get('kategori') === null && link.get('penulis') === null ? <li className="breadcrumb-item active" aria-current="page">Blog</li> : <li className="breadcrumb-item" aria-current="page"><Link to={'/blog'}>Blog</Link></li>}
+                        <li className="breadcrumb-item"><Link onClick={handleScroll} to={'/'}>Beranda</Link></li>
+                        {link.get('kategori') === null && link.get('penulis') === null ? <li className="breadcrumb-item active" aria-current="page">Blog</li> : <li className="breadcrumb-item" aria-current="page"><Link onClick={handleScroll} to={'/blog'}>Blog</Link></li>}
                         {link.get('kategori') !== null ? <li className="breadcrumb-item active" aria-current="page">{link.get('kategori')}</li> : ''}
                         {link.get('penulis' !== null ? <li className="breadcrumb-item active" aria-current="page">Blog</li> : '')}
                         </ol>

@@ -9,8 +9,9 @@ export default function Header() {
     const [errorRegister, setErrorRegister] = useState('')
     const [errorConfirm, setErrorConfirm] = useState('')
     const [errorLogin, setErrorLogin] = useState('')
+    const [jumlahnotif, setjumlahnotif] = useState(0)
     const [loginStatus, setLoginStatus] = useState(false)
-    const [userName, setUserName] = useState('')
+    const [UserData, setUserData] = useState('')
     const locat = useLocation();
     const navigate = useNavigate();
 
@@ -76,8 +77,8 @@ export default function Header() {
     const getData = () => {
         var formData = new FormData()
         formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        axios.post('http://localhost/bukubook/api/customer/get', formData).then((res) => {
-            setUserName(res.data.data)
+        axios.post('http://localhost/bukubook/api/cartapi/getnotif', formData).then((res) => {
+            setUserData(res.data.data)
         })
     }
 
@@ -86,7 +87,7 @@ export default function Header() {
             localStorage.setItem('LoginStatus', 'false')
         }
         check()
-    },[loginStatus])
+    },[loginStatus, locat])
 
     return (
         <Fragment>
@@ -105,7 +106,7 @@ export default function Header() {
                                 <ul className="nav navbar-nav menu_nav ml-auto mr-auto">
                                 <li className="nav-item"><Link onClick={handleScroll} to={'/'} className={locat.pathname === '/' ? 'nav-link navvlink active' : 'nav-link navvlink'} id='homelink'>Beranda</Link></li>
                                 <li className="nav-item submenu dropdown">
-                                    <Link to="/katalog" onClick={handleScroll} className="nav-link dropdown-toggle">Katalog</Link>
+                                    <Link to="/katalog" onClick={handleScroll} className={locat.pathname === '/katalog' ? "nav-link dropdown-toggle active" : "nav-link dropdown-toggle"}>Katalog</Link>
                                 </li>
                                 <li className="nav-item submenu dropdown">
                                     <Link to={'blog'} onClick={handleScroll} className={locat.pathname.indexOf('/blog') > -1 ? 'nav-link dropdown-toggle navvlink active' : 'nav-link dropdown-toggle navvlink'} id='bloglink'>blog</Link>
@@ -115,31 +116,31 @@ export default function Header() {
 
                                 <ul className="nav-shop">
                                 <li className="nav-item dropdown">
-                                    <button class="nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="ti-search"></i></button>
-                                    <div class="dropdown-menu px-3" aria-labelledby="dropdownMenuButton">
+                                    <button className="nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="ti-search"></i></button>
+                                    <div className="dropdown-menu px-3" aria-labelledby="dropdownMenuButton">
                                         <form onSubmit={handleSearch}>
                                             <input type="text" className='form-control' id='searchq'/>
                                         </form>
                                     </div>
                                 </li>
-                                    {loginStatus ? <li className="nav-item"><button><i className="ti-shopping-cart"></i><span className="nav-shop__circle">3</span></button> </li> : ''}
-                                    {loginStatus ? <li className="nav-item"><Link onClick={handleScroll} to={'/profil'}>{userName?.NamaPanggilan}</Link></li> : <li className="nav-item"><Link className="button button-header" to={'/login'}>Login</Link></li>}
+                                    {loginStatus ? <li className="nav-item"><button><i className="ti-shopping-cart"></i><span className={UserData?.jumlah < 1 ? 'nav-shop__circle d-none' : 'nav-shop__circle'}>{UserData?.jumlah}</span></button> </li> : ''}
+                                    {loginStatus ? <li className="nav-item"><Link onClick={handleScroll} to={'/profil'}>{UserData?.NamaPanggilan}</Link></li> : <li className="nav-item"><Link className="button button-header" to={'/login'}>Login</Link></li>}
                                 </ul>
                             </div>
                         </div>
                     </nav>
                 </div>
             </header>
-            <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Daftar</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <div className="modal fade" id="exampleModalCenter2" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered" role="document">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLongTitle">Daftar</h5>
+                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body">
+                    <div className="modal-body">
                         <div className="login">
                             <form className="login-container form-check" onSubmit={handleRegister}>
                                 <p>
@@ -171,7 +172,7 @@ export default function Header() {
                             </form>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div className="modal-footer">
                         <h6>Sudah punya akun? <a href='?' data-toggle="modal" data-dismiss="modal" aria-label="Close" data-target="#exampleModalCenter" role={'button'} onClick={handlePrevent}>masuk</a></h6>
                     </div>
                     </div>

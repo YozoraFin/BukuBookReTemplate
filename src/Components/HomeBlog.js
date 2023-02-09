@@ -8,6 +8,10 @@ export default function HomeBlog() {
     const [blog, setBlog] = useState([]);
     const [loadingBlog, setLoadingBlog] = useState(true);
 
+    const handleScroll = () => {
+        window.scrollTo(0, 400)
+    }
+
     const getBlog = () => {
         axios.get('http://localhost/bukubook/api/articleapi/get').then((res) => {
             setBlog(res.data.data)
@@ -86,12 +90,12 @@ export default function HomeBlog() {
                                         </div>
                                         <div className="card-body">
                                             <ul className="card-blog__info">
-                                            <li><Link to={`/blog/?penulis=${blogd.Penulis}`}>By {blogd.Penulis}</Link></li>
-                                            <li><Link to={`/blog/${blogd.ID}`}><i className="ti-comments-smiley"></i> 2 Comments</Link></li>
+                                            <li><Link onClick={handleScroll} to={`/blog/?penulis=${blogd.Penulis}`}>By {blogd.Penulis}</Link></li>
+                                            <li><Link onClick={handleScroll} to={`/blog/${blogd.ID}`}><i className="ti-comments-smiley"></i> {blogd.JumlahKomen} Komentar</Link></li>
                                             </ul>
-                                            <h4 className="card-blog__title"><Link to={`/blog/${blogd.ID}`}>{blogd.Judul}</Link></h4>
+                                            <h4 className="card-blog__title"><Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Judul}</Link></h4>
                                             <p>{blogd.Teaser}</p>
-                                            <Link to={`/blog/${blogd.ID}`}>Baca Selengkapnya <i className="ti-arrow-right"></i></Link>
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>Baca Selengkapnya <i className="ti-arrow-right"></i></Link>
                                         </div>
                                     </div>
                                 </div>

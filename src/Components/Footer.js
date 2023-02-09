@@ -10,6 +10,10 @@ export default function Footer() {
 	const [social, setSocial] = useState([]);
 	const [loadingsocial, setLoadingsocial] = useState(true);
 
+	const handleScrollKatalog = () => {
+		window.scrollTo(0, 400)
+	}
+
 	const handleScrollBlog = () => {
 		window.scrollTo(0, 400)
 	}
@@ -147,7 +151,7 @@ export default function Footer() {
 							<h4 className="footer_title">Navigasi</h4>
 							<ul className="list">
 								<li><Link to={'/'} onClick={handleScrollHome}>Beranda</Link></li>
-								<li><a href="?">Katalog</a></li>
+								<li><Link to={'/katalog'} onClick={handleScrollKatalog}>Katalog</Link></li>
 								<li><Link to={'/blog'} onClick={handleScrollBlog}>Blog</Link></li>
 								<li><Link to={'/contact'} onClick={handleScrollContact}>Hubungi</Link></li>
 							</ul>

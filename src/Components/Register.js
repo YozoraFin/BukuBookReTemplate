@@ -72,7 +72,7 @@ export default function Register() {
                         </div>
                         <div class="col-lg-6">
                             <div class="login_form_inner register_form_inner">
-                                <h3>Create an account</h3>
+                                <h3>Register</h3>
                                 <form class="row login_form" action="#/" id="register_form" onSubmit={handleRegister}>
                                     <div class="col-md-12 form-group">
                                         <input type="text" class="form-control" id="namel" name="NamaLengkap" placeholder="Nama Lengkap"/>
