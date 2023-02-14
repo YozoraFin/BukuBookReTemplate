@@ -12,7 +12,7 @@ import Select from 'react-select';
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-export default function Katalog() {
+export default function Katalog({cart, setCart}) {
     const [bukuList, setBukuList] = useState([])
     const [genreList, setGenreList] = useState([])
     const [loadingBuku, setLoadingBuku] = useState(true)
@@ -39,6 +39,7 @@ export default function Katalog() {
     const qKeyword = useRef('')
     const qMin = useRef('')
     const qMax = useRef('')
+    const stok = useRef({})
     const param = useLocation().search
     const link = new URLSearchParams(param)
     const separator = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
@@ -54,25 +55,36 @@ export default function Katalog() {
 
     const handleAdd = (e) => {
         const MySwal = withReactContent(Swal)
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        formData.append('id', e.target.id)
-        formData.append('qty', 1)
-        axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
-            if(res.data.status === 200) {
-                MySwal.fire({
-                    title: 'Buku Berhasil Ditambahkan',
-                    text: 'Kamu bisa melihat barangmu di keranjang',
-                    icon: 'success'
-                })
-            } else {
-                MySwal.fire({
-                    title: res.data.status,
-                    text: res.data.message,
-                    icon: 'error'
-                })
-            }
-        })
+        console.log(stok.current[e.target.id])
+        if(stok.current[e.target.id] === 0 || stok.current[e.target.id] === undefined) {
+            MySwal.fire({
+                icon: 'error',
+                title: 'Buku Kosong',
+                text: 'Buku yang ingin anda tambahkan saat ini sedang kosong'
+            })
+        } else {
+            var formData = new FormData()
+            formData.append('AksesToken', localStorage.getItem('accesstoken'))
+            formData.append('id', e.target.id)
+            formData.append('qty', 1)
+            axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
+                if(res.data.status === 200) {
+                    MySwal.fire({
+                        title: 'Buku Berhasil Ditambahkan',
+                        text: 'Kamu bisa melihat barangmu di keranjang',
+                        icon: 'success'
+                    }).then(() => {
+                        setCart(cart+1)
+                    })
+                } else {
+                    MySwal.fire({
+                        title: res.data.status,
+                        text: res.data.message,
+                        icon: 'error'
+                    })
+                }
+            })
+        }
     }
 
     const handleGenre = (e) => {
@@ -90,7 +102,6 @@ export default function Katalog() {
         const keyword = `&keyword=${document.getElementById('keywordinput').value}`
         qKeyword.current = keyword
         navigate(`/katalog?${qSort.current}${keyword}${qGenre.current}${qMax.current}${qMin.current}`)
-        console.log(qKeyword)
     }
 
     const handleRangeUp = (value) => {
@@ -202,14 +213,23 @@ export default function Katalog() {
             if(link.get('max') === null || link.get('max') === '') {
                 SslideMax.current = SlideMax.current
             }
+            res.data.data.map((hasil) => {
+                stok.current[hasil.ID] = hasil.Stok
+            })
             setTotalData(res.data.data)
             const data = res.data.data
             const slice = data?.slice(offsetz, offsetz + perPage)
             const bukulist = slice?.map(bukud => 
-                <div className="col-6 col-lg-4" key={`bukulist${bukud.ID}`}>
+                <div className={bukud.Stok === 0 ? 'col-6 col-lg-4 habis' : 'col-6 col-lg-4'} key={`bukulist${bukud.ID}`}>
                     <div className="card text-center card-product">
                         <div className="card-product__img">
-                            {bukud.SampulBuku.map((sampul, index) => {
+                            {bukud.SampulBuku.length < 1
+                            ?
+                            (
+                                <img className="card-img" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' alt=""/>
+                            )
+                            :
+                            bukud.SampulBuku.map((sampul, index) => {
                                 if(index < 1) {
                                     return(<img className="card-img" src={sampul.Sampul} alt="" key={`gambarkatalog${index}`}/>)
                                 }

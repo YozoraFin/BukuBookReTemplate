@@ -65,6 +65,16 @@ html {
     transition: .1s
 }
 
+.habis {
+    filter: opacity(0.2);
+}
+
+@media screen and (max-width: 768px) {
+    .price-range-area .noUi-horizontal .noUi-handle {
+        left: 20px;
+    }
+}
+
 .price-range-area .noUi-horizontal .noUi-handle:focus {
     outline: 0
 }
@@ -277,6 +287,23 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
 }
 
+.cartlist {
+    margin-bottom: 15px;
+}
+
+.order_box .list li .awo {
+    line-height: normal;
+}
+
+.pixel-radios:hover {
+    cursor: pointer;
+}
+
+.labellkurir {
+    margin-left: 4px;
+    cursor: pointer !important;
+}
+
 @media screen and (max-width:1000px) {
     #bestSellerCarousel .owl-next {
         position: absolute;
@@ -291,6 +318,10 @@ input[type=number]::-webkit-outer-spin-button {
         transform: translateY(-30%);
         left: -50px;
     }
+}
+
+.gambarcart {
+    height: auto !important;
 }
 
 @media screen and (max-width:768px) {
@@ -314,4 +345,6 @@ input[type=number]::-webkit-outer-spin-button {
         height: 200px !important;
     }
 }
+
+
 

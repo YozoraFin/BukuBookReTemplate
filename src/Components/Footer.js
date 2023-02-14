@@ -153,7 +153,7 @@ export default function Footer() {
 								<li><Link to={'/'} onClick={handleScrollHome}>Beranda</Link></li>
 								<li><Link to={'/katalog'} onClick={handleScrollKatalog}>Katalog</Link></li>
 								<li><Link to={'/blog'} onClick={handleScrollBlog}>Blog</Link></li>
-								<li><Link to={'/contact'} onClick={handleScrollContact}>Hubungi</Link></li>
+								<li><Link to={'/kontak'} onClick={handleScrollContact}>Hubungi</Link></li>
 							</ul>
 						</div>
 					</div>

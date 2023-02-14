@@ -2,14 +2,8 @@
 import axios from 'axios';
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 
-export default function Header() {
-    const [errorRegister, setErrorRegister] = useState('')
-    const [errorConfirm, setErrorConfirm] = useState('')
-    const [errorLogin, setErrorLogin] = useState('')
-    const [jumlahnotif, setjumlahnotif] = useState(0)
+export default function Header({cart, setCart}) {
     const [loginStatus, setLoginStatus] = useState(false)
     const [UserData, setUserData] = useState('')
     const locat = useLocation();
@@ -22,38 +16,6 @@ export default function Header() {
     const handleSearch = (e) => {
         e.preventDefault()
         navigate(`/katalog?keyword=${document.getElementById('searchq').value}`)
-    }
-
-    const handlePrevent = (e) => {
-        e.preventDefault()
-    }
-
-    const handleRegister = (e) => {
-        e.preventDefault()
-        let password = document.getElementById('pass').value
-        let confirm = document.getElementById('cpass').value
-        const MySwal = withReactContent(Swal);
-        if(password.length < 8) {
-            setErrorRegister('Password harus memiliki 8 karakter atau lebih')
-        } else {
-            setErrorRegister('')
-            if(password !== confirm) {
-                setErrorConfirm('Konfirmasi password tidak sesuai')
-            } else {
-                setErrorConfirm('')
-                var formData = new FormData(e.target);
-                axios.post('http://localhost/bukubook/api/customer/register', formData).then((response) => {
-                    if(response.data.status === 200) {
-                        MySwal.fire(response.data.message, 'Terima kasih telah bergabung', 'success')
-                    } else if(response.data.status === 400) {
-                        MySwal.fire(response.data.message, '', 'error')
-                    } else{
-                        MySwal.fire(response.data.message, 'Mohon coba lagi setelah beberapa saat', 'error')
-                    }
-                })
-    
-            }
-        }
     }
 
     const check = () =>  {
@@ -79,6 +41,7 @@ export default function Header() {
         formData.append('AksesToken', localStorage.getItem('accesstoken'))
         axios.post('http://localhost/bukubook/api/cartapi/getnotif', formData).then((res) => {
             setUserData(res.data.data)
+            setCart(res.data.data?.jumlah)
         })
     }
 
@@ -87,7 +50,7 @@ export default function Header() {
             localStorage.setItem('LoginStatus', 'false')
         }
         check()
-    },[loginStatus, locat])
+    },[loginStatus, locat, cart])
 
     return (
         <Fragment>
@@ -111,7 +74,7 @@ export default function Header() {
                                 <li className="nav-item submenu dropdown">
                                     <Link to={'blog'} onClick={handleScroll} className={locat.pathname.indexOf('/blog') > -1 ? 'nav-link dropdown-toggle navvlink active' : 'nav-link dropdown-toggle navvlink'} id='bloglink'>blog</Link>
                                 </li>
-                                <li className="nav-item"><Link onClick={handleScroll} to={'contact'} className={locat.pathname.indexOf('/contact') > -1 ? 'nav-link navvlink active' : 'nav-link'}>Hubungi</Link></li>
+                                <li className="nav-item"><Link onClick={handleScroll} to={'kontak'} className={locat.pathname.indexOf('/kontak') > -1 ? 'nav-link navvlink active' : 'nav-link'}>Hubungi</Link></li>
                                 </ul>
 
                                 <ul className="nav-shop">
@@ -123,7 +86,7 @@ export default function Header() {
                                         </form>
                                     </div>
                                 </li>
-                                    {loginStatus ? <li className="nav-item"><button><i className="ti-shopping-cart"></i><span className={UserData?.jumlah < 1 ? 'nav-shop__circle d-none' : 'nav-shop__circle'}>{UserData?.jumlah}</span></button> </li> : ''}
+                                    {loginStatus ? <li className="nav-item"><button><Link onClick={handleScroll} to={'/keranjang'}><i className="ti-shopping-cart"></i><span className={cart < 1 ? 'nav-shop__circle d-none' : 'nav-shop__circle'}>{cart}</span></Link></button> </li> : ''}
                                     {loginStatus ? <li className="nav-item"><Link onClick={handleScroll} to={'/profil'}>{UserData?.NamaPanggilan}</Link></li> : <li className="nav-item"><Link className="button button-header" to={'/login'}>Login</Link></li>}
                                 </ul>
                             </div>
@@ -131,53 +94,6 @@ export default function Header() {
                     </nav>
                 </div>
             </header>
-            <div className="modal fade" id="exampleModalCenter2" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered" role="document">
-                    <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLongTitle">Daftar</h5>
-                        <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="login">
-                            <form className="login-container form-check" onSubmit={handleRegister}>
-                                <p>
-                                    <input type="input" placeholder="Nama Lengkap" className='form-control' name='NamaLengkap' required />
-                                </p>
-                                <p>
-                                    <input type="input" placeholder="Nama Panggilan" className='form-control' name='NamaPanggilan' required/>
-                                </p>
-                                <p>
-                                    <input type="password" placeholder="Password" className='form-control' name='Password' id='pass' required/>
-                                </p>
-                                <p>
-                                    <input type="password" placeholder="Konfirmasi Password" className='form-control' name='CPassword' id='cpass' required/>
-                                    {errorRegister}
-                                    {errorConfirm}
-                                </p>
-                                <p>
-                                    <input type="email" placeholder="Email" className='form-control' name='Email' required/>
-                                </p>
-                                <p>
-                                    <input type="input" placeholder="No. Telp" className='form-control' name='NoTelephone' required/>
-                                </p>
-                                <p>
-                                    <input type="input" placeholder="Alamat Rumah" className='form-control' name='AlamatRumah' required/>
-                                </p>
-                                <p className='text-right'>
-                                    <button type="submit" className="btn btn-primary">Daftar</button>
-                                </p>
-                            </form>
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <h6>Sudah punya akun? <a href='?' data-toggle="modal" data-dismiss="modal" aria-label="Close" data-target="#exampleModalCenter" role={'button'} onClick={handlePrevent}>masuk</a></h6>
-                    </div>
-                    </div>
-                </div>
-            </div>
         </Fragment>
     )
 }

@@ -62,8 +62,11 @@ export default function Contact() {
     }
 
     const handleVerify = (value) => {
-        console.log(value)
         setVerified(true)
+    }
+
+    const handleExpired = () => {
+        setVerified(false)
     }
 
     useEffect(() => {
@@ -143,6 +146,7 @@ export default function Contact() {
                                             <ReCAPTCHA
                                                 sitekey={process.env.REACT_APP_SITEKEY}
                                                 onChange={handleVerify}
+                                                onExpired={handleExpired}
                                             />
                                         </div>
                                         <div className="col-12 col-lg-6">

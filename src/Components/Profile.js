@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { Fragment, useEffect } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
@@ -14,13 +15,24 @@ export default function Profile() {
             text: 'Setelah Keluar kamu akan diarahkan kembali ke beranda',
             icon: 'question',
             showCancelButton: true,
-            cancelButtonText: 'Tidak'
+            cancelButtonText: 'Tidak',
+            confirmButtonText: 'Ya'
         }).then((res) => {
             if(res.isConfirmed) {
                 localStorage.setItem('accesstoken', '')
                 navigate('/')
             } else {
                 navigate('/profil')
+            }
+        })
+    }
+
+    const checkt = () => {
+        var formData = new FormData()
+        formData.append('AksesToken', localStorage.getItem('accesstoken'));
+        axios.post('http://localhost/bukubook/api/customer/get', formData).then((res) => {
+            if(res.data.status === 400) {
+                navigate('/tamu')
             }
         })
     }
@@ -43,6 +55,7 @@ export default function Profile() {
 
     useEffect(() => {
         updateLink()
+        checkt()
     },[parazm])
 
     return (

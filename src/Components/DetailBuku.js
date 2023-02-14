@@ -6,7 +6,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { SwiperSlide, Swiper } from 'swiper/react'
 
-export default function DetailBuku() {
+export default function DetailBuku({cart, setCart}) {
     const [DataBuku, setDataBuku] = useState([])
     const [loadingDataBuku, setLoadingDataBuku] = useState(true)
     const [qty, setQty] = useState(1)
@@ -34,7 +34,7 @@ export default function DetailBuku() {
         } else if(e.target.value > DataBuku[0]?.Stok) {
             setQty(DataBuku[0]?.Stok)
         } else {
-            setQty(e.target.value)
+            setQty(Number(e.target.value))
         }
     }
 
@@ -50,6 +50,8 @@ export default function DetailBuku() {
                     title: 'Berhasil menambahkan',
                     text: 'Kamu bisa mengecek barangmu di keranjang',
                     icon: 'success'
+                }).then(() => {
+                    setCart(cart + 1)
                 })
             } else {
                 MySwal.fire({
