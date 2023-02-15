@@ -32,11 +32,11 @@ export default function BlogList() {
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link onClick={handleScroll} to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                        <Link onClick={handleScroll} to={`/blog?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog/?penulis=${blogd.Penulis}`}>{blogd.Penulis}
+                                            <Link onClick={handleScroll} to={`/blog?penulis=${blogd.Penulis}`}>{blogd.Penulis}
                                                 <i className="lnr lnr-user"></i>
                                             </Link>
                                         </li>
@@ -85,11 +85,11 @@ export default function BlogList() {
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link onClick={handleScroll} to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                        <Link onClick={handleScroll} to={`/blog?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Penulis}
+                                            <Link onClick={handleScroll} to={`/blog?penulis=${blogd.Penulis}`}>{blogd.Penulis}
                                                 <i className="lnr lnr-user"></i>
                                             </Link>
                                         </li>
@@ -137,11 +137,11 @@ export default function BlogList() {
                         <div className="col-md-3">
                             <div className="blog_info text-right">
                                 <div className="post_tag">
-                                    <Link onClick={handleScroll} to={`/blog/?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                    <Link onClick={handleScroll} to={`/blog?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
                                 </div>
                                 <ul className="blog_meta list">
                                     <li>
-                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Penulis}
+                                        <Link onClick={handleScroll} to={`/blog?penulis=${blogd.Penulis}`}>{blogd.Penulis}
                                             <i className="lnr lnr-user"></i>
                                         </Link>
                                     </li>

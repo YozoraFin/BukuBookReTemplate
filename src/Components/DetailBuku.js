@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios'
 import React, { Fragment, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -13,7 +14,7 @@ export default function DetailBuku({cart, setCart}) {
     const param = useParams()
     
     const handleUp = () => {
-        if(qty === DataBuku[0]?.Stok) {
+        if(qty >= DataBuku[0]?.Stok) {
             setQty(DataBuku[0]?.Stok)
         } else {
             setQty(qty + 1)
@@ -21,7 +22,9 @@ export default function DetailBuku({cart, setCart}) {
     }
 
     const handleDown = () => {
-        if(qty === 1) {
+        if(DataBuku[0]?.Stok === 0) {
+            setQty(0)
+        } else if(qty === 1) {
             setQty(1)
         } else {
             setQty(qty - 1)
@@ -29,7 +32,9 @@ export default function DetailBuku({cart, setCart}) {
     }
 
     const handleChange = (e) => {
-        if(e.target.value < 1) {
+        if(e.target.value === '') {
+            setQty('')
+        } else if(e.target.value < 1) {
             setQty(1)
         } else if(e.target.value > DataBuku[0]?.Stok) {
             setQty(DataBuku[0]?.Stok)
@@ -40,27 +45,35 @@ export default function DetailBuku({cart, setCart}) {
 
     const handleAdd = () => {
         const MySwal = withReactContent(Swal)
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        formData.append('id', DataBuku[0]?.ID)
-        formData.append('qty', qty)
-        axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
-            if(res.data.status === 200) {
-                MySwal.fire({
-                    title: 'Berhasil menambahkan',
-                    text: 'Kamu bisa mengecek barangmu di keranjang',
-                    icon: 'success'
-                }).then(() => {
-                    setCart(cart + 1)
-                })
-            } else {
-                MySwal.fire({
-                    title: res.data.status,
-                    text: res.data.message,
-                    icon: 'error'
-                })
-            }
-        })
+        if(qty === '' || qty === 0) {
+            MySwal.fire({
+                title: 'Tolong isi jumlah buku',
+                icon: 'error',
+                text: 'Tidak bisa memasukkan kedalam keranjang jika jumlah buku kosong'
+            })
+        } else {
+            var formData = new FormData()
+            formData.append('AksesToken', localStorage.getItem('accesstoken'))
+            formData.append('id', DataBuku[0]?.ID)
+            formData.append('qty', qty)
+            axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
+                if(res.data.status === 200) {
+                    MySwal.fire({
+                        title: 'Berhasil menambahkan',
+                        text: 'Kamu bisa mengecek barangmu di keranjang',
+                        icon: 'success'
+                    }).then(() => {
+                        setCart(cart + 1)
+                    })
+                } else {
+                    MySwal.fire({
+                        title: res.data.status,
+                        text: res.data.message,
+                        icon: 'error'
+                    })
+                }
+            })
+        }
     }
 
     const getData = () => {
@@ -130,7 +143,7 @@ export default function DetailBuku({cart, setCart}) {
                                 <div className="pcount my-2">
                                     <label htmlFor="qty">Quantity:</label>
                                     <button className="" type="button" onClick={handleDown}><i className="ti-angle-left"></i></button>
-                                    <input onChange={handleChange} type="number" name="qty" id="sst" size="2" maxlength="12" value={qty} title="Quantity:" className="input-text qty"/>
+                                    <input onChange={handleChange} type="number" name="qty" id="sst" size="2" value={qty} title="Quantity:" className="input-text qty"/>
                                     <button className="" type="button" onClick={handleUp}><i className="ti-angle-right"></i></button>
                                 </div>
                                 <button onClick={handleAdd} className="button primary-btn">Add to Cart</button>               

@@ -69,6 +69,15 @@ html {
     filter: opacity(0.2);
 }
 
+.header_area {
+    position: sticky !important;
+    top: 0;
+}
+
+.table-mobile tr td {
+    border: none;
+}
+
 @media screen and (max-width: 768px) {
     .price-range-area .noUi-horizontal .noUi-handle {
         left: 20px;

@@ -1,5 +1,5 @@
 /* eslint-disable array-callback-return */
-import React, { Fragment, useEffect, useReducer, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import OwlCarousel from 'react-owl-carousel';
 import 'owl.carousel/dist/assets/owl.carousel.css';
 import 'owl.carousel/dist/assets/owl.theme.default.css';
@@ -10,7 +10,7 @@ import { Link, useLocation } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 
-export default function ProductSlide() {
+export default function ProductSlide({cart, setCart}) {
     const [trend, setTrend] = useState([]);
     const [loadingTrend, setloadingTrend] = useState(true);
     const [best, setBest] = useState([]);
@@ -34,7 +34,10 @@ export default function ProductSlide() {
                     title: 'Buku Berhasil Ditambahkan',
                     text: 'Kamu bisa melihat barangmu di keranjang',
                     icon: 'success'
-                })
+                }).then(() => {
+                        setCart(cart+1)
+                        console.log(cart)
+                    })
             } else {
                 MySwal.fire({
                     title: res.data.status,
@@ -96,9 +99,15 @@ export default function ProductSlide() {
                         trend?.map((datrend, index) => {
                             if(index < 8) {
                                 return(
-                                    <div className="card text-center card-product" key={`trend${index}`}>
+                                    <div className={datrend.Stok === 0 ? 'card text-center card-product habis' : 'card text-center card-product'} key={`trend${index}`}>
                                         <div className="card-product__img">
-                                        {datrend.SampulBuku.map((sampul, index) => {
+                                        {datrend.SampulBuku.length < 1
+                                        ?
+                                        (
+                                            <img className="card-img" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' alt=""/>
+                                        )
+                                        :
+                                        datrend.SampulBuku.map((sampul, index) => {
                                             if(index < 1) {
                                                 return(
                                                     <img key={`sampul${index}`} className="img-fluid" src={sampul.Sampul} alt="" width={255} height={360} />
@@ -143,9 +152,15 @@ export default function ProductSlide() {
                         best?.map((dabest, index) => {
                             if(index < 8) {
                                 return(
-                                    <div className="card text-center card-product" key={`best${index}`}>
+                                    <div className={dabest.Stok === 0 ? 'card text-center card-product habis' : 'card text-center card-product'} key={`best${index}`}>
                                         <div className="card-product__img">
-                                        {dabest.SampulBuku.map((sampul, index) => {
+                                        {dabest.SampulBuku.length < 1
+                                        ?
+                                        (
+                                            <img className="card-img" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' alt=""/>
+                                        )
+                                        :
+                                        dabest.SampulBuku.map((sampul, index) => {
                                             if(index < 1) {
                                                 return(
                                                     <img key={`sampul${index}`} className="img-fluid" src={sampul.Sampul} alt="" width={255} height={360}/>

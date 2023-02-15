@@ -263,6 +263,14 @@ export default function Katalog({cart, setCart}) {
         })
     }
 
+    const handleReset = () => {
+        qSort.current = ''
+        qGenre.current = ''
+        qKeyword.current = ''
+        qMax.current = ''
+        qMin.current = ''
+    }
+
     useEffect(() => {
         if(qSort.current !== cSort || qKeyword.current !== cKeyword || qMax.current !== cMax || qMin.current !== cMin || cOffset !== offsetz || cPerPage !== perPage || cGenre !== qGenre) {
             getData()
@@ -470,7 +478,7 @@ export default function Katalog({cart, setCart}) {
         if(fSort === '' && fGenre === '' && fKeyword === '' && fMax === '' && fMin === '') {
             filter = ''
         } else {
-            filter = <h6><Link to={'/katalog'}>X</Link> {fSort} {fGenre} {fKeyword} {fMin} {fMax}</h6>
+            filter = <h6><Link onClick={handleReset} to={'/katalog'}>X</Link> {fSort} {fGenre} {fKeyword} {fMin} {fMax}</h6>
         }
     const optionsSort = [
         {value: 'default', label: 'Default'},
@@ -611,7 +619,6 @@ export default function Katalog({cart, setCart}) {
                                     activeClassName={"active"}
                                     onClick={handleScroll}
                                     /> : ''}
-                                    
                             </nav>
                         </div>
                     </section>

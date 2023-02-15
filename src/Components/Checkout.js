@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from 'axios'
 import React, { useEffect, useRef } from 'react'
 import { useState } from 'react'
@@ -11,6 +12,7 @@ import withReactContent from 'sweetalert2-react-content'
 export default function Checkout() {
     const [cartData, setCartData] = useState({})
     const [ongkir, setOngkir] = useState([])
+    const [loadingOngkir, setLoadingOngkir] = useState(false)
     const [loadingCart, setLoadingCart] = useState(true)
     const [provinsi, setProvinsi] = useState([])
     const [loadingProvinsi, setLoadingProvinsi] = useState(true)
@@ -22,6 +24,7 @@ export default function Checkout() {
     const [hargaOngkir, setHargaOngkir] = useState(0)
     const [hargaAkhir, setHargaAkhir] = useState(0)
     const [errorTnc, setErrorTnc] = useState('')
+    const [loadKota, setLoadKota] = useState('pilih provinsi terlebih dahulu')
     const SKurir = useRef('')
     const SProvinsi = useRef('')
     const SKota = useRef('')
@@ -66,7 +69,9 @@ export default function Checkout() {
     }
 
     const handleProvSelect = (e) => {
+        setLoadingKota(true)
         if(e.value !== 'default' && e.value !== 'loading') {
+            setLoadKota('Memuat...')
             setProvinsis(!provinsis)
             LProvinsi.current = e.label
             SProvinsi.current = e.value
@@ -97,8 +102,9 @@ export default function Checkout() {
         }
     }
 
-    const handleTotal = () => {
+    const handleOngkir = () => {
         if(SKurir.current !== '' && SKota.current !== '' && SProvinsi.current !== '') {
+            setLoadingOngkir(true)
             var formData = new FormData()
             formData.append('Asal', 444)
             formData.append('Tujuan', SKota.current)
@@ -106,8 +112,12 @@ export default function Checkout() {
             formData.append('Berat', Number(cartData?.jumlah)*500)
             axios.post('http://localhost/bukubook/api/rajaongkirapi/getongkir', formData).then((res) => {
                 setOngkir(res.data.data.map((ong, index) => {
-                    return(<li key={`layanankurir${index}`}><input onClick={handleLayanan} className='pixel-radios' value={ong.harga} type="radio" name='layanankurir' id={ong.deskripsi}/><label className='labellkurir' htmlFor={ong.service}>Rp {separator(ong.harga)} {ong.deskripsi} ({ong.service}) estimasi(hari): {ong.estimasi}</label></li>)
+                    return(<li key={`layanankurir${index}`}><input onClick={handleLayanan} className='pixel-radios' value={ong.harga} type="radio" name='layanankurir' id={ong.deskripsi}/><label className='labellkurir' htmlFor={ong.deskripsi}>Rp {separator(ong.harga)} {ong.deskripsi} ({ong.service}) estimasi(hari): {ong.estimasi}</label></li>)
                 }))
+            }).catch((error) => {
+                console.log(error)
+            }).finally(() => {
+                setLoadingOngkir(false)
             })
         }
     }
@@ -169,7 +179,7 @@ export default function Checkout() {
                                     let formDelete = new FormData();
                                     formDelete.append('AksesToken', localStorage.getItem('accesstoken'))
                                     axios.post('http://localhost/bukubook/api/cartapi/removeall', formDelete).then(() => {
-                                        navigate('/detail')
+                                        navigate(`/detail/${res.data.orderID}`)
                                     })
                                 })
                             } else {
@@ -192,7 +202,7 @@ export default function Checkout() {
         if(provinsi.length < 1) {
             check()
         }
-        handleTotal()
+        handleOngkir()
     },[kotas, kurirs, provinsis])
 
     const provoptions = loadingProvinsi ? 
@@ -209,7 +219,7 @@ export default function Checkout() {
 
     const kotaoptions = loadingKota ? 
                         (
-                            [{value: 'loading', label: 'pilih provinsi terlebih dahulu'}]
+                            [{value: 'loading', label: loadKota}]
                         )
                         :
                         kota?.map((kota) => {
@@ -227,38 +237,38 @@ export default function Checkout() {
 
     return (
         <Fragment>
-            <section class="blog-banner-area" id="category">
-                <div class="container h-100">
-                    <div class="blog-banner">
-                        <div class="text-center">
+            <section className="blog-banner-area" id="category">
+                <div className="container h-100">
+                    <div className="blog-banner">
+                        <div className="text-center">
                             <h1>Checkout</h1>
-                            <nav aria-label="breadcrumb" class="banner-breadcrumb">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><Link to={'/'}>Beranda</Link></li>
-                                    <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+                            <nav aria-label="breadcrumb" className="banner-breadcrumb">
+                                <ol className="breadcrumb">
+                                    <li className="breadcrumb-item"><Link to={'/'}>Beranda</Link></li>
+                                    <li className="breadcrumb-item active" aria-current="page">Checkout</li>
                                 </ol>
                             </nav>
                         </div>
                     </div>
                 </div>
             </section>
-            <section class="checkout_area section-margin--small">
-                <div class="container">
-                    <div class="billing_details">
-                        <div class="row">
-                            <div class="col-lg-8">
+            <section className="checkout_area section-margin--small">
+                <div className="container">
+                    <div className="billing_details">
+                        <div className="row">
+                            <div className="col-lg-8">
                                 <h3>Billing Details</h3>
-                                <form onSubmit={handleCheckout} class="row contact_form" id='formcheckout'>
-                                    <div class="col-md-12 form-group p_star">
-                                        <input required type="text" class="form-control" id="first" name="Nama" placeholder='Nama Lengkap'/>
+                                <form onSubmit={handleCheckout} className="row contact_form" id='formcheckout'>
+                                    <div className="col-md-12 form-group p_star">
+                                        <input required type="text" className="form-control" id="first" name="Nama" placeholder='Nama Lengkap'/>
                                     </div>
-                                    <div class="col-md-6 form-group p_star">
-                                        <input required type="number" class="form-control" id="number" name="NoTelp" placeholder='Nomor HP' />
+                                    <div className="col-md-6 form-group p_star">
+                                        <input required type="number" className="form-control" id="number" name="NoTelp" placeholder='Nomor HP' />
                                     </div>
-                                    <div class="col-md-6 form-group p_star">
-                                        <input required type="email" class="form-control" id="email" name="Email" placeholder='Email'/>
+                                    <div className="col-md-6 form-group p_star">
+                                        <input required type="email" className="form-control" id="email" name="Email" placeholder='Email'/>
                                     </div>
-                                    <div class="col-md-12 form-group p_star">
+                                    <div className="col-md-12 form-group p_star">
                                         <Select
                                             defaultValue={{ value: 'default', label: 'Provinsi' }}
                                             className='country_select'
@@ -266,7 +276,7 @@ export default function Checkout() {
                                             onChange={handleProvSelect}
                                         />
                                     </div>
-                                    <div class="col-md-12 form-group p_star">
+                                    <div className="col-md-12 form-group p_star">
                                         <Select
                                             defaultValue={{ value: 'default', label: 'Kota' }}
                                             className='country_select'
@@ -274,13 +284,13 @@ export default function Checkout() {
                                             onChange={handleKotaSelect}
                                         />
                                     </div>
-                                    <div class="col-md-12 form-group p_star">
-                                        <input required type="text" class="form-control" id="add1" name="Alamat" placeholder='Alamat'/>
+                                    <div className="col-md-12 form-group p_star">
+                                        <input required type="text" className="form-control" id="add1" name="Alamat" placeholder='Alamat'/>
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <input required type="text" class="form-control" id="zip" name="Kodepos" placeholder="Kode Pos"/>
+                                    <div className="col-md-12 form-group">
+                                        <input required type="number" className="form-control" id="zip" name="Kodepos" placeholder="Kode Pos"/>
                                     </div>
-                                    <div class="col-md-12 form-group p_star">
+                                    <div className="col-md-12 form-group p_star">
                                         <Select
                                             defaultValue={{ value: 'default', label: 'Kurir' }}
                                             className='country_select'
@@ -288,31 +298,34 @@ export default function Checkout() {
                                             onChange={handleKurirSelect}
                                         />
                                     </div>
-                                    <div class={ongkir < 1 ? 'col-md-12 form-group p_star sidebar-categories d-none' : 'col-md-12 form-group p_star sidebar-categories'}>
+                                    <div className={ongkir < 1 ? 'col-md-12 form-group p_star sidebar-categories d-none' : 'col-md-12 form-group p_star sidebar-categories'}>
                                         <ul>
                                             {ongkir}
                                         </ul>
                                     </div>
-                                    <div class="col-md-12 form-group mb-3">
-                                        <div class="creat_account">
+                                    <div className={loadingOngkir ? 'col-md-12 form-group p_star sidebar-categories' : 'col-md-12 form-group p_star sidebar-categories d-none'}> 
+                                        <p>Memuat...</p>
+                                    </div>
+                                    <div className="col-md-12 form-group mb-3">
+                                        <div className="creat_account">
                                             <h3>Catatan</h3>
                                         </div>
-                                        <textarea class="form-control" name="Catatan" id="message" rows="1" placeholder="Catatan"></textarea>
+                                        <textarea className="form-control" name="Catatan" id="message" rows="1" placeholder="Catatan"></textarea>
                                     </div>
                                 </form>
                             </div>
-                            <div class="col-lg-4">
-                                <div class="order_box">
+                            <div className="col-lg-4">
+                                <div className="order_box">
                                     <h2>Your Order</h2>
-                                    <ul class="list">
+                                    <ul className="list">
                                         <li><a href="?"><h4>Product <span>Total</span></h4></a></li>
                                         { loadingCart ?
                                             (
                                             <li key={`ccartskeleton`}>
                                                 <div className="row cartlist">
                                                     <Link className='col-6 awo' to={`?`}><Skeleton/></Link> 
-                                                    <span class="col-2"><Skeleton/></span> 
-                                                    <span class="col-4"><Skeleton/></span>
+                                                    <span className="col-2"><Skeleton/></span> 
+                                                    <span className="col-4"><Skeleton/></span>
                                                 </div>
                                             </li>
                                             )
@@ -321,24 +334,24 @@ export default function Checkout() {
                                                 return( <li key={`ccart${index}`}>
                                                             <div className="row cartlist">
                                                                 <Link className='col-5 awo' to={`/buku/${buku.BukuID}`}>{buku.NamaBuku}</Link> 
-                                                                <span class="col-2">x {buku.Jumlah}</span> 
-                                                                <span class="col-5" align='right'>{buku.Subtotal}</span>
+                                                                <span className="col-2">x {buku.Jumlah}</span> 
+                                                                <span className="col-5" align='right'>{buku.Subtotal}</span>
                                                             </div>
                                                         </li>)
                                             })}
                                     </ul>
-                                    <ul class="list list_2">
+                                    <ul className="list list_2">
                                         <li><a href="?">Subtotal <span>Rp {separator(Number(cartData?.subtotal))}</span></a></li>
                                         <li><a href="?">Ongkir <span>Rp {separator(hargaOngkir)}</span></a></li>
                                         <li><a href="?">Harga Akhir <span>Rp {hargaAkhir === 0 ? separator(Number(cartData?.subtotal)) : separator(hargaAkhir)}</span></a></li>
                                     </ul>
-                                    <div class="creat_account">
+                                    <div className="creat_account">
                                         <input type="checkbox" id="tnc" name="selector"/>
                                         <label htmlFor="tnc">Saya telah membaca dan menyetujui T&C</label>
                                         <p className='text-danger'>{errorTnc}</p>
                                     </div>
-                                    <div class="text-center">
-                                        <button form='formcheckout' class="button button-paypal">Bayar!</button>
+                                    <div className="text-center">
+                                        <button form='formcheckout' className="button button-paypal">Bayar!</button>
                                     </div>
                                 </div>
                             </div>

@@ -73,67 +73,67 @@ export default function Footer() {
 	const ctc = loadinginfo ?
 				(
 					<div className="ml-40">
-						<p className="sm-head">
+						<div className="sm-head">
 							<span className="fa fa-location-arrow"></span>
 							Lokasi
-						</p>
-						<p><Skeleton width={100} height={10}/></p>
+						</div>
+						<div><Skeleton width={100} height={10}/></div>
 
-						<p className="sm-head">
+						<div className="sm-head">
 							<span className="fa fa-phone"></span>
 							Nomor Telephone
-						</p>
-						<p>
+						</div>
+						<div>
 							<Skeleton width={120} height={10} />
-						</p>
+						</div>
 
-						<p className="sm-head">
+						<div className="sm-head">
 							<span className="fa fa-envelope"></span>
 							Email
-						</p>
-						<p>
+						</div>
+						<div>
 							<Skeleton width={120} height={10} />
-						</p>
+						</div>
 					</div>
 				)
 				:
 				(
 					<div className="ml-40">
-						<p className="sm-head">
+						<div className="sm-head">
 							<span className="fa fa-location-arrow"></span>
 							Lokasi
-						</p>
-						<p>{info?.Alamat}</p>
+						</div>
+						<div>{info?.Alamat}</div>
 
-						<p className="sm-head">
+						<div className="sm-head">
 							<span className="fa fa-phone"></span>
 							Nomor Telephone
-						</p>
-						<p>
+						</div>
+						<div>
 							{info?.NoTelp}
-						</p>
+						</div>
 
-						<p className="sm-head">
+						<div className="sm-head">
 							<span className="fa fa-envelope"></span>
 							Email
-						</p>
-						<p>
+						</div>
+						<div>
 							{info?.Email}
-						</p>
+						</div>
 					</div>
 				)
 	
 	const msc = loadingsocial ?
 				(
-					<p><Skeleton width={80} count={5} height={10} className='mb-2'/></p>
+					<div><Skeleton width={80} count={5} height={10} className='mb-2'/></div>
 				)
 				:
 				social?.map((dasocial, index) => {
 					if(index < 5) {
 						return(
-							<p className="sm-head mb-2" key={`social${index}`}>
+							<div className="sm-head mb-2" key={`social${index}`}>
 								<a href={dasocial.Link}><p><span dangerouslySetInnerHTML={{ __html:dasocial.Icon }}></span>  {dasocial.Nama}</p></a>
-							</p>
+							</div>
 						)
 					}
 				})
@@ -176,9 +176,9 @@ export default function Footer() {
 		<div className="footer-bottom">
 			<div className="container">
 				<div className="row d-flex">
-					<p className="col-lg-12 footer-text text-center">
+					<div className="col-lg-12 footer-text text-center">
 Copyright &copy;{new Date().getFullYear()} All rights reserved | This template is made with <i className="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank" rel="noreferrer">Colorlib</a>
-                    </p>
+                    </div>
 				</div>
 			</div>
 		</div>

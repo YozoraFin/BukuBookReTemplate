@@ -43,8 +43,8 @@ export default function App() {
                     <Route exact path='/tamu' element={<Guest/>} />
                     <Route exact path='/keranjang' element={<Cart dcart={cart} setCart={setCart} />} />
                     <Route exact path='/checkout' element={<Checkout/>}/>
-                    <Route exact path='/detail' element={<Confirmation/>} />
-                    <Route exact index element={<Main/>} />
+                    <Route exact path='/detail/:id' element={<Confirmation/>} />
+                    <Route exact index element={<Main cart={cart} setCart={setCart}/>} />
                     <Route exact path='/*' element={<Empty/>}/>
                 </Routes>
             <Footer/>

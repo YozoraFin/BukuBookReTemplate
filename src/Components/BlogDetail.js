@@ -179,27 +179,21 @@ export default function BlogDetail() {
                 <div className="col-lg-3  col-md-3">
 					<div className="blog_info text-right">
 						<div className="post_tag">
-								{loadingBlog ? <Skeleton width={60} /> : <a>{blog?.Kategori}</a>}
+								{loadingBlog ? <Skeleton width={60} /> : <Link to={`/blog?kategori=${blog?.Kategori}`}>{blog?.Kategori}</Link>}
 						</div>
 						<ul className="blog_meta list">
 							<li>
 								{loadingBlog ? <Skeleton width={110}/> : 
-									<Link to={`/blog?penulis=${blog?.Penulis}`}>{blog?.Penulis}
-										<i className="lnr lnr-user"></i>
-									</Link>
+									<Link to={`/blog?penulis=${blog?.Penulis}`}>{blog?.Penulis}<i className="lnr lnr-user"></i></Link>
 								}
 							</li>
 							<li>
 								{loadingBlog ? <Skeleton width={108}/> : 
-									<a>{blog?.Tanggal}
-											<i className="lnr lnr-calendar-full"></i>
-									</a>
+									<p>{blog?.Tanggal} <i className="lnr lnr-calendar-full"></i></p>
 								}
 							</li>
 							<li>
-								<a>{blog?.JumlahKomen} Komentar
-										<i className="lnr lnr-bubble"></i>
-								</a>
+								<p>{blog?.JumlahKomen} Komentar <i className="lnr lnr-bubble"></i></p>
 							</li>
 						</ul>
                 	</div>

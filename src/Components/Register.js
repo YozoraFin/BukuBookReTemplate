@@ -43,64 +43,64 @@ export default function Register() {
 
     return (
         <Fragment>
-            <section class="blog-banner-area" id="category">
-                <div class="container h-100">
-                    <div class="blog-banner">
-                        <div class="text-center">
+            <section className="blog-banner-area" id="category">
+                <div className="container h-100">
+                    <div className="blog-banner">
+                        <div className="text-center">
                             <h1>Register</h1>
-                            <nav aria-label="breadcrumb" class="banner-breadcrumb">
-                                <ol class="breadcrumb">
-                                <li class="breadcrumb-item"><Link to={'/'}>Beranda</Link></li>
-                                <li class="breadcrumb-item active" aria-current="page">Register</li>
+                            <nav aria-label="breadcrumb" className="banner-breadcrumb">
+                                <ol className="breadcrumb">
+                                <li className="breadcrumb-item"><Link to={'/'}>Beranda</Link></li>
+                                <li className="breadcrumb-item active" aria-current="page">Register</li>
                                 </ol>
                             </nav>
                         </div>
                     </div>
                 </div>
             </section>
-            <section class="login_box_area section-margin">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <div class="login_box_img">
-                                <div class="hover">
+            <section className="login_box_area section-margin">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-6">
+                            <div className="login_box_img">
+                                <div className="hover">
                                     <h4>Sudah mempunyai akun?</h4>
                                     <p>Lanjutkan petualanganmu dengan masuk sekarang</p>
-                                    <Link class="button button-account" to={'/login'}>Login</Link>
+                                    <Link className="button button-account" to={'/login'}>Login</Link>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="login_form_inner register_form_inner">
+                        <div className="col-lg-6">
+                            <div className="login_form_inner register_form_inner">
                                 <h3>Register</h3>
-                                <form class="row login_form" action="#/" id="register_form" onSubmit={handleRegister}>
-                                    <div class="col-md-12 form-group">
-                                        <input type="text" class="form-control" id="namel" name="NamaLengkap" placeholder="Nama Lengkap"/>
+                                <form className="row login_form" action="#/" id="register_form" onSubmit={handleRegister}>
+                                    <div className="col-md-12 form-group">
+                                        <input type="text" className="form-control" id="namel" name="NamaLengkap" placeholder="Nama Lengkap"/>
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <input type="text" class="form-control" id="namep" name="NamaPanggilan" placeholder="Nama Panggilan"/>
+                                    <div className="col-md-12 form-group">
+                                        <input type="text" className="form-control" id="namep" name="NamaPanggilan" placeholder="Nama Panggilan"/>
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <input type="password" class="form-control" id="rpass" name="Password" placeholder="Password"  />
+                                    <div className="col-md-12 form-group">
+                                        <input type="password" className="form-control" id="rpass" name="Password" placeholder="Password"  />
                                     </div>
                                     <p className='col-md-12'>
                                         {errorConfirm}
                                         {errorRegister}
                                     </p>
-                                    <div class="col-md-12 form-group">
-                                        <input type="password" class="form-control" id="rcpass" name="CPassword" placeholder="Konfirmasi Password"  />
+                                    <div className="col-md-12 form-group">
+                                        <input type="password" className="form-control" id="rcpass" name="CPassword" placeholder="Konfirmasi Password"  />
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <input type="text" class="form-control" id="email" name="Email" placeholder="Email"/>
+                                    <div className="col-md-12 form-group">
+                                        <input type="text" className="form-control" id="email" name="Email" placeholder="Email"/>
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <input type="text" class="form-control" id="ntlp" name="NoTelephone" placeholder="No HP"/>
+                                    <div className="col-md-12 form-group">
+                                        <input type="text" className="form-control" id="ntlp" name="NoTelephone" placeholder="No HP"/>
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <input type="text" class="form-control" id="alamat" name="AlamatRumah" placeholder="Alamat"/>
+                                    <div className="col-md-12 form-group">
+                                        <input type="text" className="form-control" id="alamat" name="AlamatRumah" placeholder="Alamat"/>
                                     </div>
-                                    <div class="col-md-12 form-group">
-                                        <button type="submit" value="submit" class="button button-register w-100">Register</button>
+                                    <div className="col-md-12 form-group">
+                                        <button type="submit" value="submit" className="button button-register w-100">Register</button>
                                     </div>
                                 </form>
                             </div>

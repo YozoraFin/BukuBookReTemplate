@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import axios from 'axios';
 import { Fragment, useEffect, useState } from 'react';
@@ -54,7 +55,7 @@ export default function Header({cart, setCart}) {
 
     return (
         <Fragment>
-            <header className="header_area">
+            <header className="header_area bg-light">
                 <div className="main_menu">
                     <nav className="navbar navbar-expand-lg navbar-light">
                         <div className="container">
