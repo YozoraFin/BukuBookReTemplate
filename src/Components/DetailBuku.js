@@ -14,20 +14,28 @@ export default function DetailBuku({cart, setCart}) {
     const param = useParams()
     
     const handleUp = () => {
-        if(qty >= DataBuku[0]?.Stok) {
+        let qtys = qty
+        if(qtys === '') {
+            qtys = 0
+        }
+        if(qtys >= DataBuku[0]?.Stok) {
             setQty(DataBuku[0]?.Stok)
         } else {
-            setQty(qty + 1)
+            setQty(qtys + 1)
         }
     }
 
     const handleDown = () => {
+        let qtys = qty
+        if(qtys === '') {
+            qtys = 2
+        }
         if(DataBuku[0]?.Stok === 0) {
             setQty(0)
-        } else if(qty === 1) {
+        } else if(qtys === 1) {
             setQty(1)
         } else {
-            setQty(qty - 1)
+            setQty(qtys - 1)
         }
     }
 
@@ -154,7 +162,7 @@ export default function DetailBuku({cart, setCart}) {
             </div>
             <section className="product_description_area">
                 <div className="container">
-                    {loadingDataBuku ? <div className="tab-content"><Skeleton count={10}/></div> : <div className="tab-content" dangerouslySetInnerHTML={{ __html: DataBuku[0]?.Sinopsis }}></div>}
+                    {loadingDataBuku ? <div className="tab-content"><Skeleton count={10}/></div> : <div className="tab-content sinopsis" dangerouslySetInnerHTML={{ __html: DataBuku[0]?.Sinopsis }}></div>}
                 </div>
             </section>
         </Fragment>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-export default function Header({cart, setCart}) {
+export default function Header({cart, setCart, statusCart, setStatusCart}) {
     const [loginStatus, setLoginStatus] = useState(false)
     const [UserData, setUserData] = useState('')
     const locat = useLocation();
@@ -51,7 +51,7 @@ export default function Header({cart, setCart}) {
             localStorage.setItem('LoginStatus', 'false')
         }
         check()
-    },[loginStatus, locat, cart])
+    },[loginStatus, locat, cart, statusCart])
 
     return (
         <Fragment>
@@ -67,7 +67,7 @@ export default function Header({cart, setCart}) {
                                 <span className="icon-bar"></span>
                             </button>
                             <div className="collapse navbar-collapse offset" id="navbarSupportedContent">
-                                <ul className="nav navbar-nav menu_nav ml-auto mr-auto">
+                                <ul className="nav navbar-nav menu_nav ml-auto mr-auto mb-3">
                                 <li className="nav-item"><Link onClick={handleScroll} to={'/'} className={locat.pathname === '/' ? 'nav-link navvlink active' : 'nav-link navvlink'} id='homelink'>Beranda</Link></li>
                                 <li className="nav-item submenu dropdown">
                                     <Link to="/katalog" onClick={handleScroll} className={locat.pathname === '/katalog' ? "nav-link dropdown-toggle active" : "nav-link dropdown-toggle"}>Katalog</Link>
@@ -81,7 +81,7 @@ export default function Header({cart, setCart}) {
                                 <ul className="nav-shop">
                                 <li className="nav-item dropdown">
                                     <button className="nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="ti-search"></i></button>
-                                    <div className="dropdown-menu px-3" aria-labelledby="dropdownMenuButton">
+                                    <div className="dropdown-menu mb-3 px-3" aria-labelledby="dropdownMenuButton">
                                         <form onSubmit={handleSearch}>
                                             <input type="text" className='form-control' id='searchq'/>
                                         </form>

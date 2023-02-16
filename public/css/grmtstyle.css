@@ -88,6 +88,12 @@ html {
     outline: 0
 }
 
+.productslideresp {
+    width: 200px !important;
+    margin: auto;
+    height: auto;
+}
+
 .price-range-area .noUi-horizontal .noUi-handle:hover {
     border: 3px solid #384aeb;
     background: #fff
@@ -317,16 +323,23 @@ input[type=number]::-webkit-outer-spin-button {
     #bestSellerCarousel .owl-next {
         position: absolute;
         top: 30%;
-        transform: translateY(-30%);
-        right: -50px;
+        right: 10px;
     }
 
     #bestSellerCarousel .owl-prev {
         position: absolute;
         top: 30%;
-        transform: translateY(-30%);
-        left: -50px;
+        left: 10px;
     }
+}
+
+.profileshow {
+    object-position: center;
+}
+
+.profileedit {
+    object-position: center;
+    border-radius: 5px;
 }
 
 .gambarcart {
@@ -334,24 +347,18 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @media screen and (max-width:768px) {
-    #bestSellerCarousel .owl-next {
-        position: absolute;
-        top: 30%;
-        transform: translateY(-30%);
-        right: -50px;
-        display: none;
-    }
-
-    #bestSellerCarousel .owl-prev {
-        position: absolute;
-        top: 30%;
-        transform: translateY(-30%);
-        left: -50px;
-        display: none;
-    }
 
     .login-box-area .login-box-img {
         height: 200px !important;
+    }
+
+    .sinopsis {
+        max-height: 250px;
+        overflow-y: auto;
+    }
+    
+    .header_area .navbar_collapse {
+        overflow-y: visible !important;
     }
 }
 

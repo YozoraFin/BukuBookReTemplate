@@ -10,7 +10,7 @@ import { Link, useLocation } from 'react-router-dom';
 import withReactContent from 'sweetalert2-react-content';
 import Swal from 'sweetalert2';
 
-export default function ProductSlide({cart, setCart}) {
+export default function ProductSlide({cart, setCart, statusCart, setStatusCart}) {
     const [trend, setTrend] = useState([]);
     const [loadingTrend, setloadingTrend] = useState(true);
     const [best, setBest] = useState([]);
@@ -30,14 +30,15 @@ export default function ProductSlide({cart, setCart}) {
         formData.append('qty', 1)
         axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
             if(res.data.status === 200) {
+                setCart(cart+1)
+                setStatusCart(!statusCart)
                 MySwal.fire({
                     title: 'Buku Berhasil Ditambahkan',
                     text: 'Kamu bisa melihat barangmu di keranjang',
                     icon: 'success'
                 }).then(() => {
-                        setCart(cart+1)
-                        console.log(cart)
-                    })
+                    console.log(cart)
+                })
             } else {
                 MySwal.fire({
                     title: res.data.status,
@@ -76,10 +77,63 @@ export default function ProductSlide({cart, setCart}) {
         }
     },[best, trend, param, rerender])
 
+    const trendingResponsive = loadingTrend ?
+    (
+        <Fragment>
+            <div className="card text-center card-product" key={`trendldngrspnsv`}>
+                <div className="card-product__img">
+                <Skeleton width={255} height={360}/>
+                <ul className="card-product__imgOverlay">
+                    <li key={`srctrendldng`}><button><i className="ti-search"></i></button></li>
+                    <li key={`spntrendldng`}><button><i className="ti-shopping-cart"></i></button></li>
+                </ul>
+                </div>
+                <div className="card-body">
+                <p><Skeleton width={100}/></p>
+                <h4 className="card-product__title"><a href="single-product.html"><Skeleton width={120} /></a></h4>
+                <p className="card-product__price"><Skeleton width={110} /></p>
+                </div>
+            </div>
+        </Fragment>
+    )
+    :
+    trend?.map((datrend, index) => {
+        if(index < 8) {
+            return(
+                <div className={datrend.Stok === 0 ? 'card text-center card-product habis' : 'card text-center card-product'} key={`trendresponsive${index}`}>
+                    <div className="card-product__img">
+                    {datrend.SampulBuku.length < 1
+                    ?
+                    (
+                        <img className="productslideresp" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' alt=""/>
+                    )
+                    :
+                    datrend.SampulBuku.map((sampul, index) => {
+                        if(index < 1) {
+                            return(
+                                <img key={`sampul${index}`} className='productslideresp' src={sampul.Sampul} alt="" width={255} height={360} />
+                            )
+                        }
+                    })}
+                    <ul className="card-product__imgOverlay">
+                        <li key={`srctrend${index}`}><Link onClick={handleScroll} to={`/buku/${datrend.ID}`}><button><i className="ti-search"></i></button></Link></li>
+                        <li key={`spntrend${index}`}><button id={datrend.ID} onClick={handleAdd}><i id={datrend.ID} className="ti-shopping-cart"></i></button></li>
+                    </ul>
+                    </div>
+                    <div className="card-body">
+                    <p>{datrend.Penulis}</p>
+                    <h4 className="card-product__title"><Link to={`/buku/${datrend.ID}`}>{datrend.Judul}</Link></h4>
+                    <p className="card-product__price">{datrend.Harga}</p>
+                    </div>
+                </div>
+            )
+        }
+    })
+
     const trending =    loadingTrend ?
                         (
                             <Fragment>
-                                <div className="card text-center card-product" key={`trendldng`}>
+                                <div className="card text-center card-product" key={`trendldngrspnsv`}>
                                     <div className="card-product__img">
                                     <Skeleton width={255} height={360}/>
                                     <ul className="card-product__imgOverlay">
@@ -129,6 +183,59 @@ export default function ProductSlide({cart, setCart}) {
                             }
                         })
 
+    const thebestResponsive = loadingBest ?
+    (
+        <Fragment>
+            <div className="card text-center card-product" key={`bestldng`}>
+                <div className="card-product__img">
+                <Skeleton width={255} height={360}/>
+                <ul className="card-product__imgOverlay">
+                    <li key={`srctrendldng`}><button><i className="ti-search"></i></button></li>
+                    <li key={`spntrendldng`}><button><i className="ti-shopping-cart"></i></button></li>
+                </ul>
+                </div>
+                <div className="card-body">
+                <p><Skeleton width={100}/></p>
+                <h4 className="card-product__title"><a href="single-product.html"><Skeleton width={120} /></a></h4>
+                <p className="card-product__price"><Skeleton width={110} /></p>
+                </div>
+            </div>
+        </Fragment>
+    )
+    :
+    best?.map((dabest, index) => {
+        if(index < 8) {
+            return(
+                <div className={dabest.Stok === 0 ? 'card text-center card-product habis' : 'card text-center card-product'} key={`bestresponsive${index}`}>
+                    <div className="card-product__img">
+                    {dabest.SampulBuku.length < 1
+                    ?
+                    (
+                        <img className="productslideresp" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' alt=""/>
+                    )
+                    :
+                    dabest.SampulBuku.map((sampul, index) => {
+                        if(index < 1) {
+                            return(
+                                <img key={`sampul${index}`} className="productslideresp" src={sampul.Sampul} alt="" width={255} height={360}/>
+                            )
+                        }
+                    })}
+                    <ul className="card-product__imgOverlay">
+                        <li key={`srctrend${index}`}><Link onClick={handleScroll} to={`/buku/${dabest.ID}`}><button><i className="ti-search"></i></button></Link></li>
+                        <li key={`spntrend${index}`}><button id={dabest.ID} onClick={handleAdd}><i id={dabest.ID} className="ti-shopping-cart"></i></button></li>
+                    </ul>
+                    </div>
+                    <div className="card-body">
+                    <p>{dabest.Penulis}</p>
+                    <h4 className="card-product__title"><Link to={`/buku/${dabest.ID}`}>{dabest.Judul}</Link></h4>
+                    <p className="card-product__price">{dabest.Harga}</p>
+                    </div>
+                </div>
+            )
+        }
+    })
+
     const thebest =     loadingBest ?
                         (
                             <Fragment>
@@ -152,7 +259,7 @@ export default function ProductSlide({cart, setCart}) {
                         best?.map((dabest, index) => {
                             if(index < 8) {
                                 return(
-                                    <div className={dabest.Stok === 0 ? 'card text-center card-product habis' : 'card text-center card-product'} key={`best${index}`}>
+                                    <div className={dabest.Stok === 0 ? 'card text-center card-product habis' : 'card text-center card-product'} key={`bestser${index}`}>
                                         <div className="card-product__img">
                                         {dabest.SampulBuku.length < 1
                                         ?
@@ -192,7 +299,7 @@ export default function ProductSlide({cart, setCart}) {
                     </div>
                     <OwlCarousel 
                     id="bestSellerCarousel"
-                    className='owl-carousel owl-theme' 
+                    className='owl-carousel owl-theme d-none d-xl-block' 
                     loop={false} 
                     margin={30} 
                     nav={true} 
@@ -214,6 +321,31 @@ export default function ProductSlide({cart, setCart}) {
                     }}>
                         {trending}
                     </OwlCarousel>
+                    <OwlCarousel 
+                    id="bestSellerCarousel"
+                    className='owl-carousel owl-theme d-xl-none' 
+                    loop={false} 
+                    margin={30} 
+                    nav={true} 
+                    navText={["<i class='ti-arrow-left'></i>","<i class='ti-arrow-right'></i>"]} 
+                    dots={false}
+                    items={'2'} 
+                    responsive={{
+                        0:{
+                        items:1
+                        },
+                        600:{
+                        items: 2
+                        },
+                        900:{
+                        items:3
+                        },
+                        1130:{
+                        items:4
+                        }
+                    }}>
+                        {trendingResponsive}
+                    </OwlCarousel>
                 </div>
             </section>
             <section className="section-margin calc-60px">
@@ -224,7 +356,7 @@ export default function ProductSlide({cart, setCart}) {
                     </div>
                     <OwlCarousel 
                     id="bestSellerCarousel"
-                    className='owl-carousel owl-theme' 
+                    className='owl-carousel owl-theme d-none d-xl-block' 
                     loop={false} 
                     margin={30} 
                     nav={true} 
@@ -245,6 +377,30 @@ export default function ProductSlide({cart, setCart}) {
                         }
                     }}>
                         {thebest}
+                    </OwlCarousel>
+                    <OwlCarousel 
+                    id="bestSellerCarousel"
+                    className='owl-carousel owl-theme d-xl-none' 
+                    loop={false} 
+                    margin={30} 
+                    nav={true} 
+                    navText={["<i class='ti-arrow-left'></i>","<i class='ti-arrow-right'></i>"]} 
+                    dots={false} 
+                    responsive={{
+                        0:{
+                        items:1
+                        },
+                        600:{
+                        items: 2
+                        },
+                        900:{
+                        items:3
+                        },
+                        1130:{
+                        items:4
+                        }
+                    }}>
+                        {thebestResponsive}
                     </OwlCarousel>
                 </div>
             </section>

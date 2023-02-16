@@ -31,6 +31,8 @@ export default function Katalog({cart, setCart}) {
     const [cMin, setcMin] = useState('a')
     const [cOffset, setcOffset] = useState(0)
     const [cPerPage, setcPerPage] = useState(9)
+    const [toggleHabis, setToggleHabis] = useState(false)
+    const stokHabis = useRef(false)
     const SlideMax = useRef(1000)
     const SslideMax = useRef(1000)
     const SslideMin = useRef(0)
@@ -78,7 +80,7 @@ export default function Katalog({cart, setCart}) {
                     })
                 } else {
                     MySwal.fire({
-                        title: res.data.status,
+                        title: 'Tidak bisa menambahkan buku',
                         text: res.data.message,
                         icon: 'error'
                     })
@@ -220,7 +222,7 @@ export default function Katalog({cart, setCart}) {
             const data = res.data.data
             const slice = data?.slice(offsetz, offsetz + perPage)
             const bukulist = slice?.map(bukud => 
-                <div className={bukud.Stok === 0 ? 'col-6 col-lg-4 habis' : 'col-6 col-lg-4'} key={`bukulist${bukud.ID}`}>
+                <div className={!stokHabis.current && bukud.Stok === 0 ? 'col-6 col-lg-4 d-none' : bukud.Stok === 0 ? 'col-6 col-lg-4 habis' : 'col-6 col-lg-4'} key={`bukulist${bukud.ID}`}>
                     <div className="card text-center card-product">
                         <div className="card-product__img">
                             {bukud.SampulBuku.length < 1
@@ -269,6 +271,13 @@ export default function Katalog({cart, setCart}) {
         qKeyword.current = ''
         qMax.current = ''
         qMin.current = ''
+    }
+
+    const handleToggleHabis = () => {
+        stokHabis.current = !stokHabis.current
+        setToggleHabis(!toggleHabis)
+        console.log(stokHabis.current)
+        getData()
     }
 
     useEffect(() => {
@@ -546,6 +555,8 @@ export default function Katalog({cart, setCart}) {
                         <div className="sidebar-filter">
                             <div className="top-filter-head">Filter</div>
                                 <div className="common-filter">
+                                <div className="head">Buku Habis</div>
+                                    <input type="radio" onChange={handleChange} onClick={handleToggleHabis} checked={toggleHabis} className="pixel-radio ml-3" id="togglehabis" /><label htmlFor="togglehabis">Tampilkan</label>
                                 <div className="head">Harga</div>
                                 <div className="price-range-area">
                                     <Nouislider

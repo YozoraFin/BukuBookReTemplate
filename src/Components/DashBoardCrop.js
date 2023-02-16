@@ -1,8 +1,11 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+
 
 export default function DashBoard() {
     const [userData, setUserData] = useState({})
@@ -11,14 +14,22 @@ export default function DashBoard() {
     const [editNamaPanggilan, setEditNamaPanggilan] = useState('')
     const [editAlamat, setEditAlamat] = useState('')
     const [editNoTelp, setEditNoTelp] = useState('')
-    const [gambar, setGambar] = useState('')
-    const [srcGambar, setSrcGambar] = useState(null)
+    const [image, setImage] = useState({})
+    const [crop, setCrop] = useState({
+        unit: 'px',
+        width: 50,
+        height: 50
+    })
+    const [results, setResults] = useState(null)
+    const [srcImg, setSrcImg] = useState(null)
+    
 
     const handleEdit = (e) => {
         e.preventDefault()
         var formData = new FormData(e.target)
         const MySwal = withReactContent(Swal)
         formData.append('AksesToken', localStorage.getItem('accesstoken'))
+        formData.append('Profile', results.replace(/^data:image\/(png|jpg);base64,/,""))
         axios.post('http://localhost/bukubook/api/customer/update', formData).then((res) => {
             if(res.data.status === 200) {
                 MySwal.fire({
@@ -37,9 +48,44 @@ export default function DashBoard() {
         })
     }
 
-    const gambarInput = (event) => {
-        setGambar(document.getElementById('photoprofile').value.split(/(\\|\/)/g).pop())
-        setSrcGambar(URL.createObjectURL(event.target.files[0]))
+    const gambarInput = async(event) => {
+        setSrcImg(URL.createObjectURL(event.target.files[0]))
+    }
+
+    const getCroppedImg = () => {
+        try {
+            const canvas = document.createElement("canvas")
+            const scaleX = image.naturalWidth / image.width;
+            const scaleY = image.naturalHeight / image.height;
+            canvas.width = crop.width;
+            canvas.height = crop.height;
+            const ctx = canvas.getContext("2d");
+            const pixelRatio = window.devicePixelRatio;
+            canvas.width = crop.width * pixelRatio;
+            canvas.height = crop.height * pixelRatio;
+            ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(
+                image,
+                crop.x * scaleX,
+                crop.y * scaleY,
+                crop.width * scaleX,
+                crop.height * scaleY,
+                0,
+                0,
+                crop.width,
+                crop.height
+            );
+
+            const base64Image = canvas.toDataURL("image/jpeg", 1);
+            setResults(base64Image)
+        } catch(e) {
+            console.log(e)
+        }
+    }
+
+    const loaded = () => {
+        setImage(document.getElementById('aow'))
     }
 
     const handlePhotoClick = () => {
@@ -89,7 +135,7 @@ export default function DashBoard() {
                     <img src="/img/9121556_18973.jpg" alt="" />
                 </div>
                 <div className="imagecustomer">
-                    {userData?.profile === null ? <img src="/img/blog/blank-profile-picture-973460_1280.webp" alt="" /> : <img src={userData?.profile} alt="" className='profileshow'/>}
+                    {userData?.profile === null ? <img src="/img/blog/blank-profile-picture-973460_1280.webp" alt="" /> : <img src={userData?.profile} alt="" />}
                 </div>
             </div>
             <div className="container">
@@ -103,12 +149,25 @@ export default function DashBoard() {
                     <div className="register_form_inner">
                         <form className="row login_form" action="#/" id="register_form" onSubmit={handleEdit}>
                             <div className="col-md-12 form-group">
-                                {srcGambar && <img width={166} height={166} src={srcGambar} alt="" className='profileedit' />}
-                                <br />
-                                {gambar}
-                                <br />
                                 <button className="button button-postComment" type="button" onClick={handlePhotoClick}>Ganti Foto</button>
-                                <input onChange={gambarInput} type="file" name='Profile' className="d-none" id="photoprofile"/>
+                                <input accept='image/*' onChange={gambarInput} type="file" name='Profilez' className="d-none" id="photoprofile"/>
+                                <br />
+                                {srcImg && (
+                                    <div>
+                                        <ReactCrop
+                                            style={{ maxWidth: '50%' }}
+                                            crop={crop}
+                                            onChange={c => setCrop(c)}
+                                            aspect={1}
+                                            onComplete={getCroppedImg}
+                                        >
+                                            <img src={srcImg} alt="" onLoad={loaded} id='aow'/>
+                                        </ReactCrop>
+                                    </div>
+                                )}
+                                <div>
+                                    <img width={250} height={250} src={results} alt="cropped" id='cropped' />
+                                </div>
                             </div>
                             <div className="col-md-12 form-group">
                                 <input type="text" className="form-control" id="namel" name="NamaLengkap" placeholder="Nama Lengkap" required onChange={handleNamaLengkap} value={editNamaLengkap}/>

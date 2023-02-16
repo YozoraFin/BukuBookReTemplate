@@ -48,7 +48,7 @@ export default function History() {
                                         <td className='p-0'>{order.Tanggal}</td>
                                     </tr>
                                     <tr>
-                                        <td className='p-0'>{order.Total}</td>
+                                        <td className='p-0 active'>{order.Total}</td>
                                     </tr>
                                 </tbody>
                             </table>

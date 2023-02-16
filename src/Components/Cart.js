@@ -141,8 +141,9 @@ export default function Cart({dcart, setCart}) {
         }, 1000)
     }
 
-    const handleRemoveByID = (id) => {
+    const handleRemoveByID = (id, index) => {
         const MySwal = withReactContent(Swal);
+        console.log(index)
         MySwal.fire({
             icon: 'question',
             title: 'Apakah anda yakin?',
@@ -164,16 +165,16 @@ export default function Cart({dcart, setCart}) {
                     }).then(() => {
                         setCart(dcart - 1)
                         getCart()
-                        if(errorsetok[id + 1] === undefined) {
+                        if(errorsetok[index + 1] === undefined) {
                             seterrorsetok(setoks => ({
                                 ...setoks,
-                                [id]: ''
+                                [index]: '',
                             }))
                         } else {
                             seterrorsetok(setoks => ({
                                 ...setoks,
-                                [id]: errorsetok[id + 1],
-                                [id + 1]: ''
+                                [index]: errorsetok[index + 1],
+                                [index + 1]: ''
                             }))
                         }
                         getTotal()
@@ -211,7 +212,7 @@ export default function Cart({dcart, setCart}) {
                         if(errorsetok[e.target.id + 1] === undefined) {
                             seterrorsetok(setoks => ({
                                 ...setoks,
-                                [e.target.id]: ''
+                                [e.target.id]: '',
                             }))
                         } else {
                             seterrorsetok(setoks => ({
@@ -256,6 +257,7 @@ export default function Cart({dcart, setCart}) {
         for (let index = 0; index < Object.keys(errorsetok).length; index++) {
             if(errorsetok[index] === 'Stok Habis' || errorsetok[index] === 'Jumlah melebihi stok') {
                 next = false
+                console.log(errorsetok[index] + ' : ' +index)
             }
             
         }
@@ -325,7 +327,7 @@ export default function Cart({dcart, setCart}) {
                                             className="increase items-count" type="button"><i id={index} className="lnr lnr-chevron-up"></i></button>
                                         <button onClick={handleDown} id={index}
                                             className="reduced items-count" type="button"><i id={index} className="lnr lnr-chevron-down"></i></button>
-                                        <button onClick={() => handleRemoveByID(data.BukuID)} className='text-danger'><BsFillTrashFill/></button>
+                                        <button onClick={() => handleRemoveByID(data.BukuID, index)} className='text-danger'><BsFillTrashFill/></button>
                                     </div>
                                 </td>
                                 <td>
@@ -371,7 +373,7 @@ export default function Cart({dcart, setCart}) {
                                                         className="increase items-count" type="button"><i id={index} className="lnr lnr-chevron-up"></i></button>
                                                     <button onClick={handleDown} id={index}
                                                         className="reduced items-count" type="button"><i id={index} className="lnr lnr-chevron-down"></i></button>
-                                                    <button onClick={() => handleRemoveByID(data.BukuID)} className='text-danger'><BsFillTrashFill/></button>
+                                                    <button onClick={() => handleRemoveByID(data.BukuID, index)} className='text-danger'><BsFillTrashFill/></button>
                                                 </div>
                                             </td>
                                         </tr>

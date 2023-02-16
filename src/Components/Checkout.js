@@ -184,7 +184,7 @@ export default function Checkout() {
                                 })
                             } else {
                                 MySwal.fire({
-                                    title: res.data.status,
+                                    title: 'Tidak bisa melanjutkan pesanan',
                                     text: res.data.message,
                                     icon: 'error'
                                 })

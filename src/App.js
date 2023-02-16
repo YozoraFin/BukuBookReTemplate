@@ -22,10 +22,11 @@ import Register from './Components/Register'
 
 export default function App() {
     const [cart, setCart] = useState(0)
+    const [statusCart, setStatusCart] = useState(true)
 
     return (
         <div>
-            <Header cart={cart} setCart={setCart} />
+            <Header cart={cart} setCart={setCart} statusCart={statusCart} setStatusCart={setStatusCart} />
                 <Routes>
                     <Route exact path='/katalog' element={<Katalog cart={cart} setCart={setCart} />} />
                     <Route exact path='/blog' element={<Blog/>}>
@@ -44,7 +45,7 @@ export default function App() {
                     <Route exact path='/keranjang' element={<Cart dcart={cart} setCart={setCart} />} />
                     <Route exact path='/checkout' element={<Checkout/>}/>
                     <Route exact path='/detail/:id' element={<Confirmation/>} />
-                    <Route exact index element={<Main cart={cart} setCart={setCart}/>} />
+                    <Route exact index element={<Main cart={cart} setCart={setCart} statusCart={statusCart} setStatusCart={setStatusCart}/>} />
                     <Route exact path='/*' element={<Empty/>}/>
                 </Routes>
             <Footer/>
