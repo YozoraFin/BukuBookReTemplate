@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Fragment, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 
-export default function Header({cart, setCart, statusCart, setStatusCart}) {
+export default function Header({statusCart, setStatusCart, panggilan, setPanggilan}) {
     const [loginStatus, setLoginStatus] = useState(false)
     const [UserData, setUserData] = useState('')
     const locat = useLocation();
@@ -20,10 +20,11 @@ export default function Header({cart, setCart, statusCart, setStatusCart}) {
     }
 
     const check = () =>  {
-        var formData = new FormData();
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        axios.post('http://localhost/bukubook/api/customer/get', formData).then((response) => {
-            if(response.data.status === 400 || response.data.status === 403) {
+        var object = {
+            AksesToken: localStorage.getItem('accesstoken')
+        }
+        axios.post('http://localhost:5000/customer/get', object).then((response) => {
+            if(response.data.status === 400 || response.data.status === 403 || response.data.status === 404) {
                 setLoginStatus(false)
                 localStorage.setItem('accesstoken', '')
                 localStorage.setItem('LoginStatus', 'false')
@@ -38,11 +39,12 @@ export default function Header({cart, setCart, statusCart, setStatusCart}) {
     
 
     const getData = () => {
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        axios.post('http://localhost/bukubook/api/cartapi/getnotif', formData).then((res) => {
+        var object = {
+            AksesToken: localStorage.getItem('accesstoken')
+        }
+        axios.post('http://localhost:5000/customer/getnotif', object).then((res) => {
             setUserData(res.data.data)
-            setCart(res.data.data?.jumlah)
+            setPanggilan(res.data.data?.NamaPanggilan)
         })
     }
 
@@ -51,7 +53,7 @@ export default function Header({cart, setCart, statusCart, setStatusCart}) {
             localStorage.setItem('LoginStatus', 'false')
         }
         check()
-    },[loginStatus, locat, cart, statusCart])
+    },[loginStatus, locat, statusCart])
 
     return (
         <Fragment>
@@ -66,29 +68,29 @@ export default function Header({cart, setCart, statusCart, setStatusCart}) {
                                 <span className="icon-bar"></span>
                                 <span className="icon-bar"></span>
                             </button>
-                            <div className="collapse navbar-collapse offset" id="navbarSupportedContent">
+                            <div className="collapse navbar-collapse offset logprofilewrap" id="navbarSupportedContent">
                                 <ul className="nav navbar-nav menu_nav ml-auto mr-auto mb-3">
-                                <li className="nav-item"><Link onClick={handleScroll} to={'/'} className={locat.pathname === '/' ? 'nav-link navvlink active' : 'nav-link navvlink'} id='homelink'>Beranda</Link></li>
-                                <li className="nav-item submenu dropdown">
-                                    <Link to="/katalog" onClick={handleScroll} className={locat.pathname === '/katalog' ? "nav-link dropdown-toggle active" : "nav-link dropdown-toggle"}>Katalog</Link>
-                                </li>
-                                <li className="nav-item submenu dropdown">
-                                    <Link to={'blog'} onClick={handleScroll} className={locat.pathname.indexOf('/blog') > -1 ? 'nav-link dropdown-toggle navvlink active' : 'nav-link dropdown-toggle navvlink'} id='bloglink'>blog</Link>
-                                </li>
-                                <li className="nav-item"><Link onClick={handleScroll} to={'kontak'} className={locat.pathname.indexOf('/kontak') > -1 ? 'nav-link navvlink active' : 'nav-link'}>Hubungi</Link></li>
+                                    <li className="nav-item"><Link onClick={handleScroll} to={'/'} className={locat.pathname === '/' ? 'nav-link navvlink active' : 'nav-link navvlink'} id='homelink'>Beranda</Link></li>
+                                    <li className="nav-item submenu dropdown">
+                                        <Link to="/katalog" onClick={handleScroll} className={locat.pathname === '/katalog' ? "nav-link dropdown-toggle active" : "nav-link dropdown-toggle"}>Katalog</Link>
+                                    </li>
+                                    <li className="nav-item submenu dropdown">
+                                        <Link to={'blog'} onClick={handleScroll} className={locat.pathname.indexOf('/blog') > -1 ? 'nav-link dropdown-toggle navvlink active' : 'nav-link dropdown-toggle navvlink'} id='bloglink'>blog</Link>
+                                    </li>
+                                    <li className="nav-item"><Link onClick={handleScroll} to={'kontak'} className={locat.pathname.indexOf('/kontak') > -1 ? 'nav-link navvlink active' : 'nav-link'}>Hubungi</Link></li>
+                                    {loginStatus ? <li className="nav-item my-3 d-xl-none"><Link onClick={handleScroll} to={'/profil'}>{panggilan}</Link></li> : <li className="nav-item"><Link className="nav-item d-xl-none my-3" to={'/login'}>Login</Link></li>}
                                 </ul>
-
-                                <ul className="nav-shop">
-                                <li className="nav-item dropdown">
-                                    <button className="nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="ti-search"></i></button>
-                                    <div className="dropdown-menu mb-3 px-3" aria-labelledby="dropdownMenuButton">
-                                        <form onSubmit={handleSearch}>
-                                            <input type="text" className='form-control' id='searchq'/>
-                                        </form>
-                                    </div>
-                                </li>
-                                    {loginStatus ? <li className="nav-item"><button><Link onClick={handleScroll} to={'/keranjang'}><i className="ti-shopping-cart"></i><span className={cart < 1 ? 'nav-shop__circle d-none' : 'nav-shop__circle'}>{cart}</span></Link></button> </li> : ''}
-                                    {loginStatus ? <li className="nav-item"><Link onClick={handleScroll} to={'/profil'}>{UserData?.NamaPanggilan}</Link></li> : <li className="nav-item"><Link className="button button-header" to={'/login'}>Login</Link></li>}
+                                <ul className="nav-shop my-3 pb-3">
+                                    <li className="nav-item dropdown">
+                                        <button className="nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i className="ti-search"></i></button>
+                                        <div className="dropdown-menu mb-3 px-3" aria-labelledby="dropdownMenuButton">
+                                            <form onSubmit={handleSearch}>
+                                                <input type="text" className='form-control' id='searchq'/>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    {loginStatus ? <li className="nav-item"><button><Link onClick={handleScroll} to={'/keranjang'}><i className="ti-shopping-cart"></i><span className={UserData?.jumlah < 1 ? 'nav-shop__circle d-none' : 'nav-shop__circle'}>{UserData?.jumlah}</span></Link></button> </li> : ''}
+                                    {loginStatus ? <li className="nav-item"><Link onClick={handleScroll} to={'/profil'} className='d-none d-xl-block'>{UserData?.NamaPanggilan}</Link></li> : <li className="nav-item"><Link className="button button-header d-none d-xl-block" to={'/login'}>Login</Link></li>}
                                 </ul>
                             </div>
                         </div>

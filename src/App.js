@@ -21,31 +21,31 @@ import Profile from './Components/Profile'
 import Register from './Components/Register'
 
 export default function App() {
-    const [cart, setCart] = useState(0)
     const [statusCart, setStatusCart] = useState(true)
+    const [panggilan, setPanggilan] = useState('')
 
     return (
         <div>
-            <Header cart={cart} setCart={setCart} statusCart={statusCart} setStatusCart={setStatusCart} />
+            <Header statusCart={statusCart} setStatusCart={setStatusCart} panggilan={panggilan} setPanggilan={setPanggilan}/>
                 <Routes>
-                    <Route exact path='/katalog' element={<Katalog cart={cart} setCart={setCart} />} />
+                    <Route exact path='/katalog' element={<Katalog statusCart={statusCart} setStatusCart={setStatusCart} />} />
                     <Route exact path='/blog' element={<Blog/>}>
                         <Route exact index element={<BlogList/>} />
                         <Route exact path='/blog/:id' element={<BlogDetail/>}/>
                     </Route>
                     <Route exact path='/profil' element={<Profile/>}>
-                        <Route exact index element={<DashBoard/>}/>
+                        <Route exact index element={<DashBoard panggilan={panggilan} setPanggilan={setPanggilan}/>}/>
                         <Route exact path='/profil/riwayat' element={<History/>} />  
                     </Route>
                     <Route exact path='/kontak' element={<Contact/>}/>
-                    <Route exact path='/buku/:id' element={<DetailBuku cart={cart} setCart={setCart} />} />
+                    <Route exact path='/buku/:id' element={<DetailBuku statusCart={statusCart} setStatusCart={setStatusCart} />} />
                     <Route exact path='/login' element={<Login/>} />
                     <Route exact path='/register' element={<Register/>} /> 
                     <Route exact path='/tamu' element={<Guest/>} />
-                    <Route exact path='/keranjang' element={<Cart dcart={cart} setCart={setCart} />} />
+                    <Route exact path='/keranjang' element={<Cart statusCart={statusCart} setStatusCart={setStatusCart} />} />
                     <Route exact path='/checkout' element={<Checkout/>}/>
                     <Route exact path='/detail/:id' element={<Confirmation/>} />
-                    <Route exact index element={<Main cart={cart} setCart={setCart} statusCart={statusCart} setStatusCart={setStatusCart}/>} />
+                    <Route exact index element={<Main statusCart={statusCart} setStatusCart={setStatusCart}/>} />
                     <Route exact path='/*' element={<Empty/>}/>
                 </Routes>
             <Footer/>

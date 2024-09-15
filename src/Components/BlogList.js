@@ -17,36 +17,35 @@ export default function BlogList() {
     const link = new URLSearchParams(param)
 
     const handleScroll = () => {
-        window.scrollTo(0, 400)
+        window.scrollTo(0, 420)
     }
 
     const getBlog = () => {
         if(link.get('kategori') !== null) {
-            axios.get('http://localhost/bukubook/api/articleapi/get/?kategori='+link.get('kategori')).then((res) => {
+            axios.get('http://localhost:5000/artikel?kategori='+link.get('kategori')).then((res) => {
                 const data = res.data.data
                 setTotalData(res.data.data)
                 const slice = data?.slice(offsetz, offsetz + perPage);
                 const bloglist = slice.map(blogd => 
-                    
-                        <article className="row blog_item" key={`blist${blogd.ID}`}>
+                        <article className="row blog_item" key={`blist${blogd?.id}`}>
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link onClick={handleScroll} to={`/blog?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                        <Link onClick={handleScroll} to={`/blog?kategori=${blogd?.Kategori?.Kategori}`}>{blogd?.Kategori?.Kategori}</Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog?penulis=${blogd.Penulis}`}>{blogd.Penulis}
+                                            <Link onClick={handleScroll} to={`/blog?penulis=${blogd?.Penulis}`}>{blogd?.Penulis}
                                                 <i className="lnr lnr-user"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
+                                            <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>{blogd?.Tanggal}
                                                 <i className="lnr lnr-calendar-full"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.JumlahKomen} Komentar
+                                            <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>{0} Komentar
                                                 <i className="lnr lnr-bubble"></i>
                                             </Link>
                                         </li>
@@ -55,13 +54,17 @@ export default function BlogList() {
                             </div>
                             <div className="col-md-9">
                                 <div className="blog_post">
-                                    <img src={blogd.Gambar} alt=""/>
+                                    {blogd?.SrcGambar === '' ?
+                                    <img className="card-img rounded-0" src={'https://img.freepik.com/free-photo/blank-notepad-notebook-with-white-pages_144627-32583.jpg?w=996&t=st=1677736516~exp=1677737116~hmac=03e820e5c49fff992af42c9076bf636d54d95029902fc79b8b746859bc08cf36'} alt=""/>
+                                        :
+                                    <img src={blogd?.SrcGambar} alt=""/>
+                                    }
                                     <div className="blog_details">
-                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
-                                            <h2>{blogd.Judul}</h2>
+                                        <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>
+                                            <h2>{blogd?.Judul}</h2>
                                         </Link>
-                                        <p>{blogd.Teaser}</p>
-                                        <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
+                                        <p>{blogd?.Teaser}</p>
+                                        <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd?.id}`}>Selengkapnya</Link>
                                     </div>
                                 </div>
                             </div>
@@ -75,31 +78,31 @@ export default function BlogList() {
                 setLoadingBlog(false);
             })
         } else if(link.get('penulis') !== null) {
-            axios.get('http://localhost/bukubook/api/articleapi/get/?penulis='+link.get('penulis')).then((res) => {
+            axios.get('http://localhost:5000/artikel?penulis='+link.get('penulis')).then((res) => {
                 const data = res.data.data
                 setTotalData(res.data.data)
                 const slice = data?.slice(offsetz, offsetz + perPage);
                 const bloglist = slice.map(blogd => 
                     
-                        <article className="row blog_item" key={`blist${blogd.ID}`}>
+                        <article className="row blog_item" key={`blist${blogd?.id}`}>
                             <div className="col-md-3">
                                 <div className="blog_info text-right">
                                     <div className="post_tag">
-                                        <Link onClick={handleScroll} to={`/blog?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                        <Link onClick={handleScroll} to={`/blog?kategori=${blogd?.Kategori?.Kategori}`}>{blogd?.Kategori?.Kategori}</Link>
                                     </div>
                                     <ul className="blog_meta list">
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog?penulis=${blogd.Penulis}`}>{blogd.Penulis}
+                                            <Link onClick={handleScroll} to={`/blog?penulis=${blogd?.Penulis}`}>{blogd?.Penulis}
                                                 <i className="lnr lnr-user"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
+                                            <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>{blogd?.Tanggal}
                                                 <i className="lnr lnr-calendar-full"></i>
                                             </Link>
                                         </li>
                                         <li>
-                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.JumlahKomen} Komentar
+                                            <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>{blogd?.JumlahKomen} Komentar
                                                 <i className="lnr lnr-bubble"></i>
                                             </Link>
                                         </li>
@@ -108,13 +111,17 @@ export default function BlogList() {
                             </div>
                             <div className="col-md-9">
                                 <div className="blog_post">
-                                    <img src={blogd.Gambar} alt=""/>
+                                    {blogd?.SrcGambar === '' ?
+                                    <img className="card-img rounded-0" src={'https://img.freepik.com/free-photo/blank-notepad-notebook-with-white-pages_144627-32583.jpg?w=996&t=st=1677736516~exp=1677737116~hmac=03e820e5c49fff992af42c9076bf636d54d95029902fc79b8b746859bc08cf36'} alt=""/>
+                                        :
+                                    <img src={blogd?.SrcGambar} alt=""/>
+                                    }
                                     <div className="blog_details">
-                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
-                                            <h2>{blogd.Judul}</h2>
+                                        <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>
+                                            <h2>{blogd?.Judul}</h2>
                                         </Link>
-                                        <p>{blogd.Teaser}</p>
-                                        <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
+                                        <p>{blogd?.Teaser}</p>
+                                        <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd?.id}`}>Selengkapnya</Link>
                                     </div>
                                 </div>
                             </div>
@@ -128,30 +135,30 @@ export default function BlogList() {
                 setLoadingBlog(false);
             })
         } else {
-            axios.get('http://localhost/bukubook/api/articleapi/get').then((res) => {
+            axios.get('http://localhost:5000/artikel').then((res) => {
                 const data = res.data.data
                 setTotalData(res.data.data)
                 const slice = data?.slice(offsetz, offsetz + perPage);
-                const bloglist = slice.map(blogd =>
-                    <article className="row blog_item" key={`blist${blogd.ID}`}>
+                const bloglist = slice?.map(blogd =>
+                    <article className="row blog_item" key={`blist${blogd?.id}`}>
                         <div className="col-md-3">
                             <div className="blog_info text-right">
                                 <div className="post_tag">
-                                    <Link onClick={handleScroll} to={`/blog?kategori=${blogd.Kategori}`}>{blogd.Kategori}</Link>
+                                    <Link onClick={handleScroll} to={`/blog?kategori=${blogd?.Kategori?.Kategori}`}>{blogd?.Kategori?.Kategori}</Link>
                                 </div>
                                 <ul className="blog_meta list">
                                     <li>
-                                        <Link onClick={handleScroll} to={`/blog?penulis=${blogd.Penulis}`}>{blogd.Penulis}
+                                        <Link onClick={handleScroll} to={`/blog?penulis=${blogd?.Penulis}`}>{blogd?.Penulis}
                                             <i className="lnr lnr-user"></i>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Tanggal}
+                                        <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>{blogd?.Tanggal}
                                             <i className="lnr lnr-calendar-full"></i>
                                         </Link>
                                     </li>
                                     <li>
-                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.JumlahKomen} Komentar
+                                        <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>{blogd?.JumlahKomen} Komentar
                                             <i className="lnr lnr-bubble"></i>
                                         </Link>
                                     </li>
@@ -160,20 +167,24 @@ export default function BlogList() {
                         </div>
                         <div className="col-md-9">
                             <div className="blog_post">
-                                <img src={blogd.Gambar} alt=""/>
+                                {blogd?.SrcGambar === '' ?
+                                    <img className="card-img rounded-0" src={'https://img.freepik.com/free-photo/blank-notepad-notebook-with-white-pages_144627-32583.jpg?w=996&t=st=1677736516~exp=1677737116~hmac=03e820e5c49fff992af42c9076bf636d54d95029902fc79b8b746859bc08cf36'} alt=""/>
+                                    :
+                                    <img src={blogd?.SrcGambar} alt=""/>
+                                }
                                 <div className="blog_details">
-                                    <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
-                                        <h2>{blogd.Judul}</h2>
+                                    <Link onClick={handleScroll} to={`/blog/${blogd?.id}`}>
+                                        <h2>{blogd?.Judul}</h2>
                                     </Link>
-                                    <p>{blogd.Teaser}</p>
-                                    <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd.ID}`}>Selengkapnya</Link>
+                                    <p>{blogd?.Teaser}</p>
+                                    <Link onClick={handleScroll} className="button button-blog" to={`/blog/${blogd?.id}`}>Selengkapnya</Link>
                                 </div>
                             </div>
                         </div>
                     </article>
                 )
                 setBlog(bloglist)
-                setPageCount(Math.ceil(data.length / perPage))
+                setPageCount(Math.ceil(data?.length / perPage))
             }).catch((error) => {
                 console.log(error)
             }).finally(() => {
@@ -184,6 +195,7 @@ export default function BlogList() {
     }
 
     const handlePageClick = (e) => {
+        window.scrollTo(0, 420)
         const selectedPage = e.selected;
         setoffsetz(selectedPage * perPage);
     }
@@ -237,24 +249,31 @@ export default function BlogList() {
         <div className="col-lg-8">
                     <div className="blog_left_sidebar">
                         {dBlog}
-                        <nav className="blog-pagination justify-content-center d-flex">
-                            {totalData.length > perPage ? <ReactPaginate
-                                previousLabel={<GrLinkPrevious/>}
-                                nextLabel={<GrLinkNext/>}
-                                breakLabel={"..."}
-                                pageCount={pageCount}
-                                marginPagesDisplayed={5}
-                                pageRangeDisplayed={5}
-                                onPageChange={handlePageClick}
-                                containerClassName={"pagination"}
-                                pageClassName={"page-item"}
-                                pageLinkClassName={"page-link"}
-                                nextClassName={'page-item'}
-                                nextLinkClassName={'page-link grmt'}
-                                previousClassName={'page-item'}
-                                previousLinkClassName={'page-link grmt'}
-                                activeClassName={"active"}/> : ''}
-                        </nav>
+                        <div className="row">
+                            <div className="col-md-3">
+                                
+                            </div>
+                            <div className="col-md-9">
+                                <nav className="blog-pagination justify-content-center d-flex">
+                                    {totalData?.length > perPage ? <ReactPaginate
+                                        previousLabel={<GrLinkPrevious/>}
+                                        nextLabel={<GrLinkNext/>}
+                                        breakLabel={"..."}
+                                        pageCount={pageCount}
+                                        marginPagesDisplayed={5}
+                                        pageRangeDisplayed={5}
+                                        onPageChange={handlePageClick}
+                                        containerClassName={"pagination"}
+                                        pageClassName={"page-item"}
+                                        pageLinkClassName={"page-link"}
+                                        nextClassName={'page-item'}
+                                        nextLinkClassName={'page-link grmt'}
+                                        previousClassName={'page-item'}
+                                        previousLinkClassName={'page-link grmt'}
+                                        activeClassName={"active"}/> : ''}
+                                </nav>
+                            </div>
+                        </div>
                     </div>
                 </div>
     )

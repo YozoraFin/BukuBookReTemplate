@@ -12,14 +12,15 @@ export default function DetailBuku({cart, setCart}) {
     const [loadingDataBuku, setLoadingDataBuku] = useState(true)
     const [qty, setQty] = useState(1)
     const param = useParams()
+    const separator = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
     
     const handleUp = () => {
         let qtys = qty
         if(qtys === '') {
             qtys = 0
         }
-        if(qtys >= DataBuku[0]?.Stok) {
-            setQty(DataBuku[0]?.Stok)
+        if(qtys >= DataBuku?.Stok) {
+            setQty(DataBuku?.Stok)
         } else {
             setQty(qtys + 1)
         }
@@ -30,7 +31,7 @@ export default function DetailBuku({cart, setCart}) {
         if(qtys === '') {
             qtys = 2
         }
-        if(DataBuku[0]?.Stok === 0) {
+        if(DataBuku?.Stok === 0) {
             setQty(0)
         } else if(qtys === 1) {
             setQty(1)
@@ -44,8 +45,8 @@ export default function DetailBuku({cart, setCart}) {
             setQty('')
         } else if(e.target.value < 1) {
             setQty(1)
-        } else if(e.target.value > DataBuku[0]?.Stok) {
-            setQty(DataBuku[0]?.Stok)
+        } else if(e.target.value > DataBuku?.Stok) {
+            setQty(DataBuku?.Stok)
         } else {
             setQty(Number(e.target.value))
         }
@@ -60,11 +61,12 @@ export default function DetailBuku({cart, setCart}) {
                 text: 'Tidak bisa memasukkan kedalam keranjang jika jumlah buku kosong'
             })
         } else {
-            var formData = new FormData()
-            formData.append('AksesToken', localStorage.getItem('accesstoken'))
-            formData.append('id', DataBuku[0]?.ID)
-            formData.append('qty', qty)
-            axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
+            const object = {
+                AksesToken: localStorage.getItem('accesstoken'),
+                BukuID: param.id,
+                qty: qty
+            }
+            axios.post('http://localhost:5000/cart/add', object).then((res) => {
                 if(res.data.status === 200) {
                     MySwal.fire({
                         title: 'Berhasil menambahkan',
@@ -75,7 +77,7 @@ export default function DetailBuku({cart, setCart}) {
                     })
                 } else {
                     MySwal.fire({
-                        title: res.data.status,
+                        title: 'Tidak bisa melanjutkan',
                         text: res.data.message,
                         icon: 'error'
                     })
@@ -85,7 +87,7 @@ export default function DetailBuku({cart, setCart}) {
     }
 
     const getData = () => {
-        axios.get(`http://localhost/bukubook/api/bukuapi/get/${param.id}`).then((res) => {
+        axios.get(`http://localhost:5000/buku/${param.id}`).then((res) => {
             setDataBuku(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -99,16 +101,16 @@ export default function DetailBuku({cart, setCart}) {
     }, [])
 
     let SampulBuku
-    let CheckSB = DataBuku[0]?.SampulBuku
+    let CheckSB = DataBuku?.Sampul
     if(loadingDataBuku) {
         SampulBuku = <Skeleton width={300} height={400} />
     } else {
         if(CheckSB.length === 1) {
-            SampulBuku = (<img key={`sampultunggal`} className='sampuldetail' src={DataBuku[0]?.SampulBuku[0].Sampul} alt=""/>)
+            SampulBuku = (<img key={`sampultunggal`} className='sampuldetail' src={DataBuku?.Sampul[0].SrcGambar} alt=""/>)
         } else {
-            SampulBuku = DataBuku[0]?.SampulBuku?.map((sampuls, index) => {
+            SampulBuku = DataBuku?.Sampul?.map((sampuls, index) => {
                 return(<SwiperSlide>
-                    <img key={`sampuldetail${index}`} className='sampuldetail' src={sampuls.Sampul} alt=""/>
+                    <img key={`sampuldetail${index}`} className='sampuldetail' src={sampuls.SrcGambar} alt=""/>
                 </SwiperSlide>)
             })
         }
@@ -120,12 +122,12 @@ export default function DetailBuku({cart, setCart}) {
                 <div className="container h-100">
                     <div className="blog-banner">
                         <div className="text-center">
-                            {loadingDataBuku ? <Skeleton width={150} height={40}/> : <h1>{DataBuku[0]?.Judul}</h1>}
+                            {loadingDataBuku ? <Skeleton width={150} height={40}/> : <h1>{DataBuku?.Judul}</h1>}
                             <nav aria-label="breadcrumb" className="banner-breadcrumb">
                                 <ol className="breadcrumb">
                                     <li className="breadcrumb-item"><Link to={'/'}>Beranda</Link></li>
                                     <li className="breadcrumb-item"><Link to={'/katalog'}>Katalog</Link></li>
-                                    {loadingDataBuku ? <li className="breadcrumb-item active" aria-current="page"><Skeleton width={50}/></li> : <li className="breadcrumb-item active" aria-current="page">{DataBuku[0]?.Judul}</li>}
+                                    {loadingDataBuku ? <li className="breadcrumb-item active" aria-current="page"><Skeleton width={50}/></li> : <li className="breadcrumb-item active" aria-current="page">{DataBuku?.Judul}</li>}
                                 </ol>
                             </nav>
                         </div>
@@ -142,11 +144,11 @@ export default function DetailBuku({cart, setCart}) {
                         </div>
                         <div className="col-lg-5 offset-lg-1">
                             <div className="s_product_text">
-                                {loadingDataBuku ? <h3><Skeleton width={100} /></h3>: <h3>{DataBuku[0]?.Judul}</h3>}
-                                {loadingDataBuku ? <h2><Skeleton width={120}/></h2> : <h2>{DataBuku[0]?.Harga}</h2>}
+                                {loadingDataBuku ? <h3><Skeleton width={100} /></h3>: <h3>{DataBuku?.Judul}</h3>}
+                                {loadingDataBuku ? <h2><Skeleton width={120}/></h2> : <h2>Rp {separator(DataBuku?.Harga)}</h2>}
                                 <ul className="list">
-                                    <li><a className="active" href="?"><span>Genre</span> : {loadingDataBuku ? <Skeleton width={70}/> : DataBuku[0]?.Genre}</a></li>
-                                    <li><a href="?"><span>Stok</span> : {loadingDataBuku ? <Skeleton width={50}/> : DataBuku[0]?.Stok}</a></li>
+                                    <li><a className="active" href="?"><span>Genre</span> : {loadingDataBuku ? <Skeleton width={70}/> : DataBuku?.Genre.Genre}</a></li>
+                                    <li><a href="?"><span>Stok</span> : {loadingDataBuku ? <Skeleton width={50}/> : DataBuku?.Stok}</a></li>
                                 </ul>
                                 <div className="pcount my-2">
                                     <label htmlFor="qty">Quantity:</label>
@@ -162,7 +164,7 @@ export default function DetailBuku({cart, setCart}) {
             </div>
             <section className="product_description_area">
                 <div className="container">
-                    {loadingDataBuku ? <div className="tab-content"><Skeleton count={10}/></div> : <div className="tab-content sinopsis" dangerouslySetInnerHTML={{ __html: DataBuku[0]?.Sinopsis }}></div>}
+                    {loadingDataBuku ? <div className="tab-content"><Skeleton count={10}/></div> : <div className="tab-content sinopsis" dangerouslySetInnerHTML={{ __html: DataBuku?.Sinopsis }}></div>}
                 </div>
             </section>
         </Fragment>

@@ -31,6 +31,7 @@ export default function Profile() {
     const checkt = () => {
         var formData = new FormData()
         formData.append('AksesToken', localStorage.getItem('accesstoken'));
+        formData.append('apikey', process.env.REACT_APP_APIKEY)
         axios.post('http://localhost/bukubook/api/customer/get', formData).then((res) => {
             if(res.data.status === 400) {
                 navigate('/tamu')

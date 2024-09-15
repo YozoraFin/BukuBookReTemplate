@@ -7,9 +7,13 @@ export default function Login() {
     const navigate = useNavigate()
 
     const handleLogin = (e) => {
+        let nutelp = `${document.getElementById('TelpLogin').value}`
         e.preventDefault()
-        var formData = new FormData(e.target);
-        axios.post('http://localhost/bukubook/api/customer/login', formData).then((response) => {
+        const object = {
+            NoTelp: nutelp,
+            Password: document.getElementById('PasswordLogin').value
+        }
+        axios.post('http://localhost:5000/customer/login', object).then((response) => {
             if(response.data.status === 401) {
                 setErrorLogin('Password yang dimasukkan salah')
             } else if(response.data.status === 503) {
@@ -18,7 +22,7 @@ export default function Login() {
                 setErrorLogin(response.data.message)
             } else {
                 localStorage.setItem('accesstoken', response.data.accesstoken)
-                navigate('/')
+                navigate('/profil')
             }
         })
     }
@@ -47,20 +51,20 @@ export default function Login() {
                             <div className="login_box_img">
                                 <div className="hover">
                                     <h4>Baru Berkunjung?</h4>
-                                    <p>Daftarkan akunmu disini dan mulau petualanganmu</p>
+                                    <p className='px-3'>Daftarkan akunmu disini dan mulai petualanganmu</p>
                                     <Link className="button button-account" to={'/register'}>Buat Akun</Link>
                                 </div>
                             </div>
                         </div>
                         <div className="col-lg-6">
                             <div className="login_form_inner">
-                                <h3>Loging</h3>
+                                <h3>Login</h3>
                                 <form className="row login_form" action="#/" id="contactForm" onSubmit={handleLogin}>
                                     <div className="col-md-12 form-group">
-                                        <input type="text" className="form-control" id="name" name="Email" placeholder="Email" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'"/>
+                                        <input type="text" className="form-control" id="TelpLogin" name="Telp" placeholder="Nomor WhatsApp" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Username'"/>
                                     </div>
                                     <div className="col-md-12 form-group">
-                                        <input type="password" className="form-control" id="name" name="Password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'"/>
+                                        <input type="password" className="form-control" id="PasswordLogin" name="Password" placeholder="Password" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Password'"/>
                                         <p className='text-danger'>{errorLogin}</p>
                                     </div>
                                     <div className="col-md-12 form-group">

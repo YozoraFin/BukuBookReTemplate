@@ -17,7 +17,7 @@ export default function Blog() {
     }
 
     const getBlog = () => {
-        axios.get('http://localhost/bukubook/api/articleapi/get').then((res) => {
+        axios.get('http://localhost:5000/artikel').then((res) => {
             setBlog(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -27,7 +27,7 @@ export default function Blog() {
     }
 
     const getKategori = () => {
-        axios.get('http://localhost/bukubook/api/articleapi/kategori').then((res) => {
+        axios.get('http://localhost:5000/kategori').then((res) => {
             setKategori(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -70,7 +70,7 @@ export default function Blog() {
                                 <li key={`kategori${index}`}>
                                     <Link onClick={handleScroll} to={`/blog?kategori=${kategorid.Kategori}`} className="d-flex justify-content-between">
                                         <p>{kategorid.Kategori}</p>
-                                        <p>{kategorid.Jumlah}</p>
+                                        <p>{kategorid.Total}</p>
                                     </Link>
                                 </li>
                             )
@@ -122,9 +122,13 @@ export default function Blog() {
                         if(index < 4) {
                             return(
                                 <div className="media post_item" key={`lbside${index}`}>
-                                    <img src={blogd.Gambar} alt="post" width={120} height={60}/>
+                                    {blogd.SrcGambar === "" ?
+                                        <img src="https://img.freepik.com/free-photo/blank-notepad-notebook-with-white-pages_144627-32583.jpg?w=996&t=st=1677736516~exp=1677737116~hmac=03e820e5c49fff992af42c9076bf636d54d95029902fc79b8b746859bc08cf36" alt="" width={120} height={60} />
+                                        :
+                                        <img src={blogd.SrcGambar} alt="" width={120} height={60}/>
+                                    }
                                     <div className="media-body">
-                                        <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>
+                                        <Link onClick={handleScroll} to={`/blog/${blogd.id}`}>
                                             <h3>{blogd.Judul}</h3>
                                         </Link>
                                         <p>{blogd.Tanggal}</p>

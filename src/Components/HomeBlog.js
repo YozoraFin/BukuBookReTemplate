@@ -13,7 +13,7 @@ export default function HomeBlog() {
     }
 
     const getBlog = () => {
-        axios.get('http://localhost/bukubook/api/articleapi/get').then((res) => {
+        axios.get('http://localhost:5000/artikel').then((res) => {
             setBlog(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -86,16 +86,20 @@ export default function HomeBlog() {
                                 <div className={index > 0 ? 'col-md-6 col-lg-4 mb-4 mb-lg-0 d-none d-md-block' : 'col-md-6 col-lg-4 mb-4 mb-lg-0'} key={`homeblog${index}`}>
                                     <div className="card card-blog">
                                         <div className="card-blog__img">
-                                            <img className="card-img rounded-0" src={blogd.Gambar} alt="" width={350} height={240}/>
+                                            {blogd.SrcGambar === '' ?
+                                                <img className="card-img rounded-0" src={' https://img.freepik.com/free-photo/blank-notepad-notebook-with-white-pages_144627-32583.jpg?w=996&t=st=1677736516~exp=1677737116~hmac=03e820e5c49fff992af42c9076bf636d54d95029902fc79b8b746859bc08cf36'} alt="" width={350} height={240}/>
+                                                :
+                                                <img className="card-img rounded-0" src={blogd.SrcGambar} alt="" width={350} height={240}/>
+                                            }
                                         </div>
                                         <div className="card-body">
                                             <ul className="card-blog__info">
                                             <li><Link onClick={handleScroll} to={`/blog/?penulis=${blogd.Penulis}`}>By {blogd.Penulis}</Link></li>
-                                            <li><Link onClick={handleScroll} to={`/blog/${blogd.ID}`}><i className="ti-comments-smiley"></i> {blogd.JumlahKomen} Komentar</Link></li>
+                                            <li><Link onClick={handleScroll} to={`/blog/${blogd.id}`}><i className="ti-comments-smiley"></i> {blogd.JumlahKomen} Komentar</Link></li>
                                             </ul>
-                                            <h4 className="card-blog__title"><Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>{blogd.Judul}</Link></h4>
+                                            <h4 className="card-blog__title"><Link onClick={handleScroll} to={`/blog/${blogd.id}`}>{blogd.Judul}</Link></h4>
                                             <p>{blogd.Teaser}</p>
-                                            <Link onClick={handleScroll} to={`/blog/${blogd.ID}`}>Baca Selengkapnya <i className="ti-arrow-right"></i></Link>
+                                            <Link onClick={handleScroll} to={`/blog/${blogd.id}`}>Baca Selengkapnya <i className="ti-arrow-right"></i></Link>
                                         </div>
                                     </div>
                                 </div>

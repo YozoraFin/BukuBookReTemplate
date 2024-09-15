@@ -12,7 +12,7 @@ import Select from 'react-select';
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
-export default function Katalog({cart, setCart}) {
+export default function Katalog({statusCart, setStatusCart}) {
     const [bukuList, setBukuList] = useState([])
     const [genreList, setGenreList] = useState([])
     const [loadingBuku, setLoadingBuku] = useState(true)
@@ -22,7 +22,7 @@ export default function Katalog({cart, setCart}) {
     const [pageCount, setPageCount] = useState(0)
     const [totalData, setTotalData] = useState([])
     const [amax] = useState(200000)
-    const [rfrom, setRfrom] = useState('0')
+    const [rfrom, setRfrom] = useState(0)
     const [rto, setRto] = useState('')
     const [cSort, setcSort] = useState('a')
     const [cGenre, setcGenre] = useState('a')
@@ -32,6 +32,7 @@ export default function Katalog({cart, setCart}) {
     const [cOffset, setcOffset] = useState(0)
     const [cPerPage, setcPerPage] = useState(9)
     const [toggleHabis, setToggleHabis] = useState(false)
+    const [currentKeyword, setCurrentKeyword] = useState('')
     const stokHabis = useRef(false)
     const SlideMax = useRef(1000)
     const SslideMax = useRef(1000)
@@ -42,6 +43,7 @@ export default function Katalog({cart, setCart}) {
     const qMin = useRef('')
     const qMax = useRef('')
     const stok = useRef({})
+    const selectSort = useRef({value: 'default', label: 'Urutkan'})
     const param = useLocation().search
     const link = new URLSearchParams(param)
     const separator = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
@@ -51,32 +53,36 @@ export default function Katalog({cart, setCart}) {
 
     }
 
+    const changeKeyword = (e) => {
+        setCurrentKeyword(e.target.value)
+    }
+
     const handleScroll = () => {
         window.scrollTo(0, 400)
     }
 
     const handleAdd = (e) => {
         const MySwal = withReactContent(Swal)
-        console.log(stok.current[e.target.id])
         if(stok.current[e.target.id] === 0 || stok.current[e.target.id] === undefined) {
             MySwal.fire({
                 icon: 'error',
                 title: 'Buku Kosong',
-                text: 'Buku yang ingin anda tambahkan saat ini sedang kosong'
+                text: 'Buku yang ingin kamu tambahkan saat ini sedang kosong'
             })
         } else {
-            var formData = new FormData()
-            formData.append('AksesToken', localStorage.getItem('accesstoken'))
-            formData.append('id', e.target.id)
-            formData.append('qty', 1)
-            axios.post('http://localhost/bukubook/api/cartapi/add', formData).then((res) => {
+            var object = {
+                BukuID: e.target.id,
+                AksesToken: localStorage.getItem('accesstoken'),
+                qty: 1
+            }
+            axios.post('http://localhost:5000/cart/add', object).then((res) => {
                 if(res.data.status === 200) {
                     MySwal.fire({
                         title: 'Buku Berhasil Ditambahkan',
                         text: 'Kamu bisa melihat barangmu di keranjang',
                         icon: 'success'
                     }).then(() => {
-                        setCart(cart+1)
+                        setStatusCart(!statusCart)
                     })
                 } else {
                     MySwal.fire({
@@ -161,6 +167,7 @@ export default function Katalog({cart, setCart}) {
             navigate(`/katalog?&sort=Termurah${qGenre.current}${qKeyword.current}${qMax.current}${qMin.current}`)
             qSort.current = `sort=Termurah`
         }
+        selectSort.current = {value: e.value, label: e.label}
     }
 
     const getData = () => {
@@ -210,30 +217,42 @@ export default function Katalog({cart, setCart}) {
             SslideMax.current = link.get('max')
         }
 
-        axios.get(`http://localhost/bukubook/api/bukuapi/get/?${sort}${genre}${keyword}${max}${min}`).then((res) => {
+        const checkStok = (data) => {
+            return data.Stok > 0
+        }
+        axios.get(`http://localhost:5000/buku?${sort}${genre}${keyword}${max}${min}`).then((res) => {
             SlideMax.current = res.data.max
             if(link.get('max') === null || link.get('max') === '') {
                 SslideMax.current = SlideMax.current
             }
-            res.data.data.map((hasil) => {
+            res.data.data?.map((hasil) => {
                 stok.current[hasil.ID] = hasil.Stok
             })
+            if(rto === '') {
+                setRto(res.data.max)
+            }
             setTotalData(res.data.data)
-            const data = res.data.data
+            let data
+            if(!stokHabis.current) {
+                data = res.data.data.filter(checkStok)
+            } else {
+                data = res.data.data
+            }
+
             const slice = data?.slice(offsetz, offsetz + perPage)
             const bukulist = slice?.map(bukud => 
-                <div className={!stokHabis.current && bukud.Stok === 0 ? 'col-6 col-lg-4 d-none' : bukud.Stok === 0 ? 'col-6 col-lg-4 habis' : 'col-6 col-lg-4'} key={`bukulist${bukud.ID}`}>
+                <div className={bukud.Stok === 0 ? 'col-6 col-lg-4 habis' : 'col-6 col-lg-4'} key={`bukulist${bukud.ID}`}>
                     <div className="card text-center card-product">
                         <div className="card-product__img">
-                            {bukud.SampulBuku.length < 1
+                            {bukud.Sampul.length < 1
                             ?
                             (
                                 <img className="card-img" src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6ENpnnhPgDE0BVDsiIAOhl8dbGVE_5vc11w&usqp=CAU' alt=""/>
                             )
                             :
-                            bukud.SampulBuku.map((sampul, index) => {
+                            bukud.Sampul.map((sampul, index) => {
                                 if(index < 1) {
-                                    return(<img className="card-img" src={sampul.Sampul} alt="" key={`gambarkatalog${index}`}/>)
+                                    return(<img className="card-img" src={sampul.SrcGambar} alt="" key={`gambarkatalog${index}`}/>)
                                 }
                             })}
                             <ul className="card-product__imgOverlay">
@@ -244,14 +263,14 @@ export default function Katalog({cart, setCart}) {
                         <div className="card-body">
                             <p>{bukud.Penulis}</p>
                             <h4 className="card-product__title"><Link onClick={handleScroll} to={`/buku/${bukud.ID}`}>{bukud.Judul}</Link></h4>
-                            <p className="card-product__price">{bukud.Harga}</p>
+                            <p className="card-product__price">Rp {separator(bukud.Harga)}</p>
                         </div>
                     </div>
                 </div>
             )
             setBukuList(bukulist)
             setPageCount(Math.ceil(data?.length / perPage))
-            axios.get('http://localhost/bukubook/api/genreapi/get').then(res => {
+            axios.get('http://localhost:5000/genre').then(res => {
                 setGenreList(res.data.data)
             }).catch((error) => {
                 console.log(error)
@@ -271,6 +290,8 @@ export default function Katalog({cart, setCart}) {
         qKeyword.current = ''
         qMax.current = ''
         qMin.current = ''
+        selectSort.current = {value: 'default', label: 'Urutkan'}
+        setCurrentKeyword('')
     }
 
     const handleToggleHabis = () => {
@@ -438,10 +459,9 @@ export default function Katalog({cart, setCart}) {
                     genreList?.map((genre, index) => {
                         const isCheked = genre.Genre === link.get('genre')
                         return(
-                            <li className="filter-list" key={`genre${index}`}><input onClick={handleGenre} onChange={handleChange} className="pixel-radio" id={genre.Genre} checked={isCheked}  type="radio" name="brand"/><label id={genre.Genre} htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Jumlah})</span></label></li>
+                            <li className="filter-list" key={`genre${index}`}><input onClick={handleGenre} onChange={handleChange} className="pixel-radio" id={genre.Genre} checked={isCheked}  type="radio" name="brand"/><label id={genre.Genre} htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Total})</span></label></li>
                         )
                     })
-
     const dGenreR =  loadingGenre ? 
                     (
                         <Skeleton count={10} className='mb-3' />
@@ -450,7 +470,7 @@ export default function Katalog({cart, setCart}) {
                     genreList?.map((genre, index) => {
                         const isCheked = genre.Genre === link.get('genre')
                         return(
-                            <li className="filter-list" key={`rgenre${index}`}><input onClick={handleGenre} onChange={handleChange} className="pixel-radio" checked={isCheked}  type="radio" name="brand" id={genre.Genre} /><label id={genre.Genre} htmlFor={genre.Genre}>{genre.Genre}<span> ({genre.Jumlah})</span></label></li>
+                            <li className="filter-list" key={`rgenre${index}`}><input onClick={handleGenre} onChange={handleChange} className="pixel-radio" checked={isCheked}  type="radio" name="brand" id={genre.Genre} /><label id={genre.Genre} htmlFor={genre.Genre}>{genre.Genre}<span> ({'genre.Jumlah'})</span></label></li>
                         )
                     })
     let filter
@@ -490,7 +510,6 @@ export default function Katalog({cart, setCart}) {
             filter = <h6><Link onClick={handleReset} to={'/katalog'}>X</Link> {fSort} {fGenre} {fKeyword} {fMin} {fMax}</h6>
         }
     const optionsSort = [
-        {value: 'default', label: 'Default'},
         {value: 'asc', label: 'A-Z'},
         {value: 'desc', label: 'Z-A'},
         {value: 'Termurah', label: 'Termurah'},
@@ -567,6 +586,7 @@ export default function Katalog({cart, setCart}) {
                                         behaviour='tap' 
                                         onSlide={handleSlide}
                                         onEnd={handleRangeUp}
+                                        onSet={handleRangeUp}
                                         format={{ to: (v) => parseFloat(v).toFixed(0), from: (v) => parseFloat(v).toFixed(0) }} 
                                     />
                                     <div className="value-wrapper d-flex">
@@ -584,9 +604,11 @@ export default function Katalog({cart, setCart}) {
                     <div className="filter-bar d-flex flex-wrap align-items-center">
                         <div className="sorting">
                             <Select
+                                value={selectSort.current}
                                 defaultValue={{value: 'default', label: 'Urutkan'}}
                                 options={optionsSort}
                                 onChange={handleSortChange}
+                                isClearable={true}
                             />
                         </div>
                         <div className="sorting mr-auto">
@@ -594,12 +616,13 @@ export default function Katalog({cart, setCart}) {
                                 defaultValue={{value: 'default', label: 'Per Halaman'}}
                                 options={optionsPage}
                                 onChange={handlePerPageChange}
+                                isClearable={true}
                             />
                         </div>
                         <div>
                         <form onSubmit={handleKeywordInput}>
                             <div className="input-group filter-bar-search">
-                                <input type="text" placeholder="Cari" id="keywordinput"/>
+                                <input value={currentKeyword} onChange={changeKeyword} type="text" placeholder="Cari" id="keywordinput"/>
                                 <div className="input-group-append">
                                 <button type="submit"><i className="ti-search"></i></button>
                                 </div>

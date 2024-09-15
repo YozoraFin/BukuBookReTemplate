@@ -10,7 +10,7 @@ import "izitoast-react/dist/iziToast.css";
 import { BsFillTrashFill } from "react-icons/bs";
 import { TbMoodEmpty } from 'react-icons/tb';
 
-export default function Cart({dcart, setCart}) {
+export default function Cart({ statusCart, setStatusCart }) {
     const [cartData, setCartData] = useState([])
     const qeteye = useRef([])
     const setok = useRef([])
@@ -28,13 +28,14 @@ export default function Cart({dcart, setCart}) {
     }
 
     const getCart = () => {
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'));
-        axios.post('http://localhost/bukubook/api/cartapi/get', formData).then((res) => {
+        var object = {
+            AksesToken: localStorage.getItem('accesstoken')
+        }
+        axios.post('http://localhost:5000/cart/', object).then((res) => {
             res.data.data?.map((hasil, index) => {
                 setStok(stoks => ({
                     ...stoks,
-                    [index]: hasil.Stok
+                    [index]: hasil.Buku.Stok
                 }));
                 setQty(qtys => ({
                     ...qtys,
@@ -49,14 +50,14 @@ export default function Cart({dcart, setCart}) {
                         ...esetoks,
                         [index]: 'Stok Habis'
                     }));
-                } else if (hasil.Stok < hasil.Jumlah) {
+                } else if (hasil.Buku.Stok < hasil.Jumlah) {
                     seterrorsetok(esetoks => ({
                         ...esetoks,
                         [index]: 'Jumlah melebihi stok'
                     }));
                 }
                 qeteye.current[index] = hasil.Jumlah;
-                setok.current[index] = hasil.Stok;
+                setok.current[index] = hasil.Buku.Stok;
             })
             setCartData(res.data.data)
         }).catch((error) => {
@@ -66,33 +67,43 @@ export default function Cart({dcart, setCart}) {
         })
     }
 
-    const handleAdd = async(qtys, id) => {
+    const handleAdd = async (qtys, id) => {
         const BukuID = document.getElementById(`BukuIndex${id}`).value
         const Qty = qtys
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        formData.append('id', BukuID)
-        formData.append('qty', Qty)
-        axios.post('http://localhost/bukubook/api/cartapi/update', formData)
+        var object = {
+            qty: Qty,
+            BukuID: BukuID,
+            AksesToken: localStorage.getItem('accesstoken')
+        }
+        axios.post('http://localhost:5000/cart/update', object).then((res) => {
+            if (res.data.status !== 200) {
+                const MySwal = withReactContent(Swal)
+                MySwal.fire({
+                    title: 'Gagal memperbarui',
+                    text: res.data.message,
+                    icon: 'error'
+                })
+            }
+        })
     }
 
     const handleChange = (e) => {
         let qtysd
-        if(e.target.value === '') {
+        if (e.target.value === '') {
             setQty(qtys => ({
                 ...qtys,
                 [e.target.id]: ''
             }))
             qeteye.current[e.target.id] = ''
             qtysd = 1
-        } else if(e.target.value < 1) {
+        } else if (e.target.value < 1) {
             setQty(qtys => ({
                 ...qtys,
                 [e.target.id]: 1
             }))
             qeteye.current[e.target.id] = 1
             qtysd = 1
-        } else if(e.target.value > stok[e.target.id]) {
+        } else if (e.target.value > stok[e.target.id]) {
             setQty(qtys => ({
                 ...qtys,
                 [e.target.id]: stok[e.target.id]
@@ -108,14 +119,14 @@ export default function Cart({dcart, setCart}) {
             qtysd = Number(e.target.value)
         }
         clearTimeout(timer.current)
-        timer.current = setTimeout(function() {
+        timer.current = setTimeout(function () {
             handleAdd(qtysd, e.target.id)
         }, 1000)
     }
 
     const handleUp = (e) => {
         let sqty
-        if((qty[e.target.id]+1) > stok[e.target.id]) {
+        if ((qty[e.target.id] + 1) > stok[e.target.id]) {
             immediateToast("error", {
                 message: "Stok tidak cukup",
                 timeout: 1000
@@ -125,18 +136,18 @@ export default function Cart({dcart, setCart}) {
                 [e.target.id]: stok[e.target.id]
             }))
             qeteye.current[e.target.id] = setok.current[e.target.id]
-            
+
             sqty = stok[e.target.id]
         } else {
             setQty(qtys => ({
                 ...qtys,
-                [e.target.id]: qty[e.target.id]+1
+                [e.target.id]: qty[e.target.id] + 1
             }))
-            qeteye.current[e.target.id] = qeteye.current[e.target.id]+1
-            sqty = qty[e.target.id]+1
+            qeteye.current[e.target.id] = qeteye.current[e.target.id] + 1
+            sqty = qty[e.target.id] + 1
         }
         clearTimeout(timer.current)
-        timer.current = setTimeout(function() {
+        timer.current = setTimeout(function () {
             handleAdd(sqty, e.target.id)
         }, 1000)
     }
@@ -146,26 +157,27 @@ export default function Cart({dcart, setCart}) {
         console.log(index)
         MySwal.fire({
             icon: 'question',
-            title: 'Apakah anda yakin?',
-            text: 'Anda perlu kembali ke katalog untuk mengembalikannya lagi',
+            title: 'Apakah kamu yakin?',
+            text: 'Kamu perlu kembali ke katalog untuk mengembalikannya lagi',
             showCancelButton: true,
             cancelButtonColor: '#ff0000',
             cancelButtonText: 'Tidak',
             confirmButtonText: 'Ya',
             confirmButtonColor: '#384aeb'
         }).then((res) => {
-            if(res.isConfirmed) {
-                let formData = new FormData()
-                formData.append('AksesToken', localStorage.getItem('accesstoken'))
-                formData.append('id', id)
-                axios.post('http://localhost/bukubook/api/cartapi/remove', formData).then(() => {
+            if (res.isConfirmed) {
+                var object = {
+                    BukuID: id,
+                    AksesToken: localStorage.getItem('accesstoken')
+                }
+                axios.post('http://localhost:5000/cart/remove', object).then(() => {
                     MySwal.fire({
                         title: 'Berhasil dihapus',
                         icon: 'success'
                     }).then(() => {
-                        setCart(dcart - 1)
+                        setStatusCart(!statusCart)
                         getCart()
-                        if(errorsetok[index + 1] === undefined) {
+                        if (errorsetok[index + 1] === undefined) {
                             seterrorsetok(setoks => ({
                                 ...setoks,
                                 [index]: '',
@@ -187,43 +199,44 @@ export default function Cart({dcart, setCart}) {
     const handleDown = (e) => {
         let qtysd
         const MySwal = withReactContent(Swal)
-        if(qty[e.target.id] < 2) {
+        if (qty[e.target.id] < 2) {
             MySwal.fire({
-                title: 'Apakah Anda yakin?',
+                title: 'Apakah Kamu Yakin?',
                 text: 'Setelah menekan "ya" barang akan dihapus dari keranjangmu dan kamu harus pergi ke katalog untuk mengembalikannya',
                 showCancelButton: true,
-                cancelButtonText:'Tidak',
-                confirmButtonText:'Ya',
+                cancelButtonText: 'Tidak',
+                confirmButtonText: 'Ya',
                 icon: 'question',
                 cancelButtonColor: '#ff0000',
                 confirmButtonColor: '#384aeb'
             }).then((sewal) => {
-                if(sewal.isConfirmed) {
-                    let formData = new FormData()
-                    formData.append('AksesToken', localStorage.getItem('accesstoken'))
-                    formData.append('id', document.getElementById(`BukuIndex${e.target.id}`).value)
-                    axios.post('http://localhost/bukubook/api/cartapi/remove', formData).then(() => {
-                    MySwal.fire({
-                        title: 'Berhasil dihapus',
-                        icon: 'success'
-                    }).then(() => {
-                        setCart(dcart - 1)
-                        getCart()
-                        if(errorsetok[e.target.id + 1] === undefined) {
-                            seterrorsetok(setoks => ({
-                                ...setoks,
-                                [e.target.id]: '',
-                            }))
-                        } else {
-                            seterrorsetok(setoks => ({
-                                ...setoks,
-                                [e.target.id]: errorsetok[e.target.id + 1],
-                                [e.target.id + 1]: ''
-                            }))
-                        }
-                        getTotal()
+                if (sewal.isConfirmed) {
+                    var object = {
+                        BukuID: document.getElementById(`BukuIndex${e.target.id}`).value,
+                        AksesToken: localStorage.getItem('accesstoken')
+                    }
+                    axios.post('http://localhost:5000/cart/remove', object).then(() => {
+                        MySwal.fire({
+                            title: 'Berhasil dihapus',
+                            icon: 'success'
+                        }).then(() => {
+                            setStatusCart(!statusCart)
+                            getCart()
+                            if (errorsetok[e.target.id + 1] === undefined) {
+                                seterrorsetok(setoks => ({
+                                    ...setoks,
+                                    [e.target.id]: '',
+                                }))
+                            } else {
+                                seterrorsetok(setoks => ({
+                                    ...setoks,
+                                    [e.target.id]: errorsetok[e.target.id + 1],
+                                    [e.target.id + 1]: ''
+                                }))
+                            }
+                            getTotal()
+                        })
                     })
-                })
                 } else {
                     setQty(qtys => ({
                         ...qtys,
@@ -236,13 +249,13 @@ export default function Cart({dcart, setCart}) {
         } else {
             setQty(qtys => ({
                 ...qtys,
-                [e.target.id]: qty[e.target.id]-1
+                [e.target.id]: qty[e.target.id] - 1
             }))
             qeteye.current[e.target.id] = qeteye.current[e.target.id] - 1
-            qtysd = qty[e.target.id]-1
+            qtysd = qty[e.target.id] - 1
         }
         clearTimeout(timer.current)
-        timer.current = setTimeout(function() {
+        timer.current = setTimeout(function () {
             handleAdd(qtysd, e.target.id)
         }, 1000)
     }
@@ -255,20 +268,20 @@ export default function Cart({dcart, setCart}) {
             total = total + qty[index]
         }
         for (let index = 0; index < Object.keys(errorsetok).length; index++) {
-            if(errorsetok[index] === 'Stok Habis' || errorsetok[index] === 'Jumlah melebihi stok') {
+            if (errorsetok[index] === 'Stok Habis' || errorsetok[index] === 'Jumlah melebihi stok') {
                 next = false
-                console.log(errorsetok[index] + ' : ' +index)
+                console.log(errorsetok[index] + ' : ' + index)
             }
-            
+
         }
-        if(next) {
-            if(total > 50) {
+        if (next) {
+            if (total > 50) {
                 MySwal.fire({
                     icon: 'error',
                     title: 'Barang terlalu banyak',
                     text: 'Pastikan barang yang akan dibeli tidak lebih dari 50 buku'
                 })
-            } else if(total === 0) {
+            } else if (total === 0) {
                 MySwal.fire({
                     icon: 'error',
                     title: 'Jumlah tidak valid',
@@ -276,123 +289,123 @@ export default function Cart({dcart, setCart}) {
                 })
             } else {
                 navigate('/checkout')
-                window.scrollTo(0   , 400)   
+                window.scrollTo(0, 400)
             }
         } else {
             MySwal.fire({
                 icon: 'error',
                 title: 'Tidak bisa melanjutkan pesanan',
-                text: 'Kemungkinan barang yang anda coba beli sudah habis atau anda memesan melebihi stok'
+                text: 'Kemungkinan barang yang kamu coba beli sudah habis atau kamu memesan melebihi stok'
             })
         }
     }
 
     useEffect(() => {
-        if(loadingCart) {
+        if (loadingCart) {
             getCart()
         }
         getTotal()
     }, [Total])
 
-    const cart =    loadingCart ?
-                    ''
-                    :
-                    cartData?.map((data, index) => {
-                        return(
-                            <tr key={`cartime${index}`}>
-                                <td>
-                                    <div className="media">
-                                        <div className="d-flex">
-                                            {data.SampulBuku.map((sampul, index) => {
-                                                if(index < 1) {
-                                                    return(<img key={`sampulbuku${index}`} src={sampul.Sampul} alt="" className='gambarcart' width={90}/>)
-                                                }
-                                            })}
-                                        </div>
-                                        <div className="media-body">
-                                            <h6 className='text-danger'>{errorsetok[index]}</h6>
-                                            <p>{data.NamaBuku}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>Rp {separator(data.Harga)}</h5>
-                                </td>
-                                <td>
-                                    <div className="product_count">
-                                        <input type="hidden" id={`BukuIndex${index}`} value={data.BukuID} />
-                                        <input required onChange={handleChange} type="number" name="qty" id={index} value={qty[index]} title="Quantity:"
-                                            className={`input-text qty qtyd`}/>
-                                        <button onClick={handleUp} id={index}
-                                            className="increase items-count" type="button"><i id={index} className="lnr lnr-chevron-up"></i></button>
-                                        <button onClick={handleDown} id={index}
-                                            className="reduced items-count" type="button"><i id={index} className="lnr lnr-chevron-down"></i></button>
-                                        <button onClick={() => handleRemoveByID(data.BukuID, index)} className='text-danger'><BsFillTrashFill/></button>
-                                    </div>
-                                </td>
-                                <td>
-                                    <h5>Rp {separator(data.Harga*qty[index])}</h5>
-                                </td>
-                            </tr>
-                        )
-                    })
+    const cart = loadingCart ?
+        ''
+        :
+        cartData?.map((data, index) => {
+            return (
+                <tr key={`cartime${index}`}>
+                    <td>
+                        <div className="media">
+                            <div className="d-flex">
+                                {data.Buku.Sampul.map((sampul, index) => {
+                                    if (index < 1) {
+                                        return (<img key={`sampulbuku${index}`} src={sampul.SrcGambar} alt="" className='gambarcart' width={90} />)
+                                    }
+                                })}
+                            </div>
+                            <div className="media-body">
+                                <h6 className='text-danger'>{errorsetok[index]}</h6>
+                                <p>{data.Buku.Judul}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <h5>Rp {separator(data.Buku.Harga)}</h5>
+                    </td>
+                    <td>
+                        <div className="product_count">
+                            <input type="hidden" id={`BukuIndex${index}`} value={data.Buku.id} />
+                            <input required onChange={handleChange} type="number" name="qty" id={index} value={qty[index]} title="Quantity:"
+                                className={`input-text qty qtyd`} />
+                            <button onClick={handleUp} id={index}
+                                className="increase items-count" type="button"><i id={index} className="lnr lnr-chevron-up"></i></button>
+                            <button onClick={handleDown} id={index}
+                                className="reduced items-count" type="button"><i id={index} className="lnr lnr-chevron-down"></i></button>
+                            <button onClick={() => handleRemoveByID(data.Buku.id, index)} className='text-danger'><BsFillTrashFill /></button>
+                        </div>
+                    </td>
+                    <td>
+                        <h5>Rp {separator(data.Buku.Harga * qty[index])}</h5>
+                    </td>
+                </tr>
+            )
+        })
     const cartR = loadingCart ?
-                    ''
-                    :
-                    cartData?.map((data, index) => {
-                        return(
-                            <tr key={`cartimer${index}`}>
-                                <td>
-                                    <table>
-                                        <tbody>
-                                        <tr>
-                                            <td className='align-top p-0 pr-3 pt-4' rowSpan={3}>
-                                                {data.SampulBuku.map((sampul, index) => {
-                                                    if(index < 1) {
-                                                        return(<img key={`sampulbuku${index}`} src={sampul.Sampul} alt="" className='gambarcart' width={90}/>)
-                                                    }
-                                                })}
-                                            </td>
-                                            <td className='p-0 pt-4'>
-                                                <p>{data.NamaBuku}</p>
-                                                <h6 className='text-danger'>{errorsetok[index]}</h6>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='p-0 pt-1 pb-3'>
-                                                <h5>Rp {separator(data.Harga)}</h5>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td className='p-0'>
-                                                <div className="product_count">
-                                                    <input type="hidden" id={`BukuIndex${index}`} value={data.BukuID} />
-                                                    <input required onChange={handleChange} type="number" name="qty" id={index} value={qty[index]} title="Quantity:"
-                                                        className={`input-text qty qtyd`}/>
-                                                    <button onClick={handleUp} id={index}
-                                                        className="increase items-count" type="button"><i id={index} className="lnr lnr-chevron-up"></i></button>
-                                                    <button onClick={handleDown} id={index}
-                                                        className="reduced items-count" type="button"><i id={index} className="lnr lnr-chevron-down"></i></button>
-                                                    <button onClick={() => handleRemoveByID(data.BukuID, index)} className='text-danger'><BsFillTrashFill/></button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-                        )
-                    })
+        ''
+        :
+        cartData?.map((data, index) => {
+            return (
+                <tr key={`cartimer${index}`}>
+                    <td>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td className='align-top p-0 pr-3 pt-4' rowSpan={3}>
+                                        {data.Buku.Sampul.map((sampul, index) => {
+                                            if (index < 1) {
+                                                return (<img key={`sampulbuku${index}`} src={sampul.SrcGambar} alt="" className='gambarcart' width={90} />)
+                                            }
+                                        })}
+                                    </td>
+                                    <td className='p-0 pt-4'>
+                                        <p>{data.Buku.Judul}</p>
+                                        <h6 className='text-danger'>{errorsetok[index]}</h6>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='p-0 pt-1 pb-3'>
+                                        <h5>Rp {separator(data.Buku.Harga)}</h5>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='p-0'>
+                                        <div className="product_count">
+                                            <input type="hidden" id={`BukuIndex${index}`} value={data.Buku.id} />
+                                            <input required onChange={handleChange} type="number" name="qty" id={index} value={qty[index]} title="Quantity:"
+                                                className={`input-text qty qtyd`} />
+                                            <button onClick={handleUp} id={index}
+                                                className="increase items-count" type="button"><i id={index} className="lnr lnr-chevron-up"></i></button>
+                                            <button onClick={handleDown} id={index}
+                                                className="reduced items-count" type="button"><i id={index} className="lnr lnr-chevron-down"></i></button>
+                                            <button onClick={() => handleRemoveByID(data.Buku.id, index)} className='text-danger'><BsFillTrashFill /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            )
+        })
     const getTotal = () => {
         Total.current = 0
-        for(var key in qeteye.current) {
-            if(cartData[key]?.Harga !== undefined) {
+        for (var key in qeteye.current) {
+            if (cartData[key]?.Buku.Harga !== undefined) {
                 const qity = qeteye.current[key]
-                const harga = Number(cartData[key]?.Harga)
-                Total.current = Total.current + qity*harga
+                const harga = Number(cartData[key]?.Buku.Harga)
+                Total.current = Total.current + qity * harga
             }
         }
-        
+
         return Total.current
     }
 
@@ -416,11 +429,11 @@ export default function Cart({dcart, setCart}) {
             <section className="cart_area">
                 <div className="container">
                     <div className="cart_inner">
-                        {   cartData?.length < 1 ?
+                        {cartData?.length < 1 ?
                             (
                                 <div className="text-center">
                                     <h1>Kosong</h1>
-                                    <h1><TbMoodEmpty/></h1>
+                                    <h1><TbMoodEmpty /></h1>
                                     <br />
                                     <p>sepertinya keranjangmu kosong... <br /> cobalah untuk menambahkan beberapa buku dari katalog</p>
                                 </div>
@@ -441,7 +454,7 @@ export default function Cart({dcart, setCart}) {
                                         {cart}
                                         <tr className="bottom_button">
                                             <td>
-                                                
+
                                             </td>
                                             <td>
 

@@ -11,7 +11,7 @@ export default function Empty() {
                         <h1>404</h1>
                         <nav aria-label="breadcrumb" className="banner-breadcrumb">
                             <h5>Halaman Tidak Dapat di Temukan</h5>
-                            <p>Kemungkinan halaman yang anda cari sudah dihapus atau belum dibuat</p>
+                            <p>Kemungkinan halaman yang kamu cari sudah dihapus atau belum dibuat</p>
                         </nav>  
                     </div>
                 </div>

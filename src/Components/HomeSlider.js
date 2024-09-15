@@ -11,7 +11,7 @@ export default function HomeSlider() {
     const [heroLoading, setHeroLoading] = useState(true);
 
     const setHeroData = () => {
-        axios.get(`http://localhost/bukubook/api/eventapi/get`).then((res) => {
+        axios.get(`http://localhost:5000/banner`).then((res) => {
             setHero(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -66,10 +66,10 @@ export default function HomeSlider() {
                         hero?.map((data, index) => {
                             return(
                                 <SwiperSlide key={'headslide'+index}>
-                                    <div className="row align-items-center pt-60px">
+                                    <div className="row align-items-center pt-60px pb-3">
                                         <div className="col-5 d-none d-sm-block">
                                             <div className="hero-banner__img">
-                                            <img className="img-fluid" src={data.Banner} alt=""/>
+                                            <img className="img-fluid" src={data.SrcBanner} alt=""/>
                                             </div>
                                         </div>
                                         <div className="col-sm-7 col-lg-6 offset-lg-1 pl-4 pl-md-5 pl-lg-0">

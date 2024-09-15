@@ -12,7 +12,7 @@ export default function Contact() {
     const [verified, setVerified] = useState(false)
 
     const getInfo = () => {
-		axios.get(`http://localhost/bukubook/api/infoapi/get`).then((res) => {
+		axios.get(`http://localhost:5000/siteconfig`).then((res) => {
             setInfo(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -26,15 +26,31 @@ export default function Contact() {
         let MySwal = withReactContent(Swal)
         if(verified) {
             MySwal.fire({
-                title: 'Apakah Anda Yakin?',
-                text: 'Setelah mengirimkan pesan anda tidak dapat menggantinya',
+                title: 'Apakah Kamu Yakin?',
+                text: 'Setelah mengirimkan pesan kamu tidak dapat menggantinya',
                 icon: 'question',
                 showDenyButton: true,
-                confirmButtonColor: '#384aeb'
+                confirmButtonColor: '#384aeb',
             }).then((res) => {
-                let formData = new FormData(e.target)
+                var object = {
+                    Nama: document.getElementById('name').value,
+                    Subject: document.getElementById('subject').value,
+                    Email: document.getElementById('email').value,
+                    Pesan: document.getElementById('message').value
+                }
                 if(res.isConfirmed) {
-                    axios.post('http://localhost/bukubook/api/emailapi/sendcontact', formData).then((res) => {
+                    MySwal.fire({
+                        title: 'Mengirim Email...',
+                        html: 'Tolong tunggu sebentar',
+                        allowEscapeKey: false,
+                        allowOutsideClick: false,
+                        showLoaderOnConfirm: true,
+                        icon: 'question',
+                        didOpen: () => {
+                          MySwal.showLoading()
+                        },
+                    });
+                    axios.post('http://localhost:5000/email/contact', object).then((res) => {
                         if(res.data.status === 200) {
                             MySwal.fire({
                                 title: 'Pesan Berhasil Dikirim',
@@ -43,7 +59,7 @@ export default function Contact() {
                             })
                         } else {
                             MySwal.fire({
-                                title: res.data.status,
+                                title: 'Tidak bisa melanjutkan pesan',
                                 text: res.data.message,
                                 icon: 'error'
                             })
@@ -108,7 +124,7 @@ export default function Contact() {
                             <div className="media contact-info">
                                 <span className="contact-info__icon"><i className="ti-headphone"></i></span>
                                 <div className="media-body">
-                                {loadinginfo ? <Skeleton width={120}/> : <h3>{Info?.NoTelp}</h3>}
+                                {loadinginfo ? <Skeleton width={120}/> : <h3>{Info?.NoTELP}</h3>}
                                 <p>08:00 - 17:00</p>
                             </div>
                         </div>
@@ -136,13 +152,13 @@ export default function Contact() {
                                     </div>
                                     <div className="col-lg-7">
                                         <div className="form-group">
-                                            <textarea className="form-control different-control w-100" name="Pesan" id="message" cols="30" rows="5" placeholder="Tuliskan Pesan Anda di Sini"></textarea>
+                                            <textarea className="form-control different-control w-100" name="Pesan" id="message" cols="30" rows="5" placeholder="Tuliskan Pesanmu di Sini"></textarea>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="form-group text-center text-md-right mt-3">
                                     <div className="row">
-                                        <div className="col-12 col-lg-6 mb-3">
+                                        <div className="col-12 col-lg-6 mb-3 recaptcha">
                                             <ReCAPTCHA
                                                 sitekey={process.env.REACT_APP_SITEKEY}
                                                 onChange={handleVerify}

@@ -27,7 +27,7 @@ export default function Footer() {
 	}
 
 	const getInfo = () => {
-		axios.get(`http://localhost/bukubook/api/infoapi/get`).then((res) => {
+		axios.get(`http://localhost:5000/siteconfig`).then((res) => {
             setInfo(res.data.data)
         }).catch((error) => {
             console.log(error)
@@ -37,7 +37,7 @@ export default function Footer() {
 	}
 
 	const getSocial = () => {
-		axios.get(`http://localhost/bukubook/api/sosialapi/get`).then(res => {
+		axios.get(`http://localhost:5000/social`).then(res => {
             setSocial(res.data.data)
         }).catch((error) => {
 			console.log(error)
@@ -99,21 +99,21 @@ export default function Footer() {
 				:
 				(
 					<div className="ml-40">
-						<div className="sm-head">
+						<div className="sm-head my-1">
 							<span className="fa fa-location-arrow"></span>
 							Lokasi
 						</div>
 						<div>{info?.Alamat}</div>
 
-						<div className="sm-head">
+						<div className="sm-head my-1">
 							<span className="fa fa-phone"></span>
 							Nomor Telephone
 						</div>
 						<div>
-							{info?.NoTelp}
+							{info?.NoTELP}
 						</div>
 
-						<div className="sm-head">
+						<div className="sm-head my-1">
 							<span className="fa fa-envelope"></span>
 							Email
 						</div>

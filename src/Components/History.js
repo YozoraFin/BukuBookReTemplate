@@ -14,6 +14,7 @@ export default function History() {
     const [pageCount, setPageCount] = useState(0)
     const [totalData, setTotalData] = useState(0)
     const [orderListResponsive, setOrderListResponsive] = useState([])
+    const separator = (num) => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
 
     const handlePageClick = (e) => {
         const selected = e.selected;
@@ -22,9 +23,10 @@ export default function History() {
     }
 
     const getData = () => {
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        axios.post('http://localhost/bukubook/api/orderapi/get', formData).then((res) => {
+        var object = {
+            AksesToken: localStorage.getItem('accesstoken')
+        }
+        axios.post('http://localhost:5000/order',object).then((res) => {
             const data = res.data.data
             const slice = data?.slice(offset, offset + perPage)
             const historyResponsive = slice?.map((order, index) => {
@@ -48,7 +50,7 @@ export default function History() {
                                         <td className='p-0'>{order.Tanggal}</td>
                                     </tr>
                                     <tr>
-                                        <td className='p-0 active'>{order.Total}</td>
+                                        <td className='p-0 active'>Rp {separator(order.Total)}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -74,7 +76,7 @@ export default function History() {
                         </div>
                     </td>
                     <td>
-                        <h5>{order.Total}</h5>
+                        <h5>Rp {separator(order.Total)}</h5>
                     </td>
                     <td>
                         <Link onClick={handleScroll} to={`/detail/${order.ID}`}><button onClick={handleScroll} className='button button-paypal'>Detail</button></Link>

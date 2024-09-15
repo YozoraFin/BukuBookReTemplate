@@ -6,7 +6,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
-
 export default function BlogDetail() {
 	const [commentForm, setCommentForm] = useState('')
     const [blog, setBlog] = useState({})
@@ -21,7 +20,7 @@ export default function BlogDetail() {
 	}
 
     const getBlog = () => {
-        axios.get(`http://localhost/bukubook/api/articleapi/get/${params.id}`).then((res) => {
+        axios.get(`http://localhost:5000/artikel/${params.id}`).then((res) => {
             setBlog(res.data.data)
             setNext(res.data.data?.Next)
             setPrevz(res.data.data?.Prev)
@@ -38,11 +37,14 @@ export default function BlogDetail() {
 
 	const handleComment = (e) => {
 		e.preventDefault()
-		var formData = new FormData(e.target)
 		const MySwal = withReactContent(Swal)
-		formData.append('AksesToken', localStorage.getItem('accesstoken'))
-		formData.append('BlogID', params.id)
-		axios.post('http://localhost/bukubook/api/komentarapi/send', formData).then((res) => {
+		const object = {
+			Komentar: document.getElementById('komentar').value,
+			AksesToken: localStorage.getItem('accesstoken'),
+			ArticleID: params.id
+		}
+
+		axios.post('http://localhost:5000/komentar/send', object).then((res) => {
 			if(res.data.status === 200) {
 				MySwal.fire({
 					title: 'Sukses',
@@ -53,7 +55,7 @@ export default function BlogDetail() {
 				})
 			} else {
 				MySwal.fire({
-					title: res.data.status,
+					title: 'Tidak bisa melanjutkan komentar',
 					text: res.data.message,
 					icon: 'error'
 				})
@@ -73,7 +75,7 @@ export default function BlogDetail() {
 				<h4>Tinggalkan Komentar</h4>
 				<form onSubmit={handleComment}>
 					<div className="form-group">
-						<textarea required className="form-control mb-10" rows="5" name="Komentar" placeholder="Komentar..."></textarea>
+						<textarea id='komentar' required className="form-control mb-10" rows="5" name="Komentar" placeholder="Komentar..."></textarea>
 					</div>
 					<button type='submit' className='button button-postComment button--active'>Kirim</button>
 				</form>
@@ -90,20 +92,20 @@ export default function BlogDetail() {
     },[params])
 
     let prev;
-    if(prevz?.ID !== 0) {
+    if(prevz?.id !== 0) {
         prev = loadingBlog ?
                 (<Skeleton width={200} height={50} /> )
                 :       
                 (
                 <Fragment>
 					<div className="thumb">
-						<Link onClick={handleScroll} to={`/blog/${prevz.ID}`}>
-							<img className="img-fluid" src={prevz.Gambar} alt="" width={60} height={60} />
+						<Link onClick={handleScroll} to={`/blog/${prevz.id}`}>
+							<img className="img-fluid" src={prevz.SrcGambar} alt="" width={60} height={60} />
 						</Link>
 					</div>
 					<div className="detials">
 						<p>Postingan Sebelumnya</p>
-						<Link onClick={handleScroll} to={`/blog/${prevz.ID}`}>
+						<Link onClick={handleScroll} to={`/blog/${prevz.id}`}>
 							<h4>{prevz.Judul}</h4>
 						</Link>
 					</div>
@@ -118,10 +120,10 @@ export default function BlogDetail() {
 					:
 					blog?.Komentar.map((komen, index) => {
 						let profile
-						if(komen.UserProfile === null) {
+						if(komen.Customer?.Profil === null || komen.Customer?.Profil === '') {
 							profile = (<img src="/img/blog/blank-profile-picture-973460_1280.webp" alt="" width={100} height={100}/>)
 						} else {
-							profile = (<img src={komen.UserProfile} alt="" width={100} height={100}/>)
+							profile = (<img src={komen.Customer?.Profil} alt="" width={100} height={100}/>)
 						}
 		
 						return(
@@ -131,9 +133,9 @@ export default function BlogDetail() {
 										<div className="thumb">
 											{profile}
 										</div>
-										<div className="desc">
+										<div className="desc comment-desc">
 											<h5>
-												<p>{komen.UserNama}</p>
+												<p>{komen.Customer.NamaLengkap}</p>
 											</h5>
 											<p className="date">{komen.Tanggal}</p>
 											<p className="comment">
@@ -147,7 +149,8 @@ export default function BlogDetail() {
 					})
 
     let next;
-    if(nextz?.ID !== 0) {
+	console.log(prevz.id)
+    if(nextz?.id !== 0) {
         next = loadingBlog ?
                 (<Skeleton width={200} height={50} /> )
                 :
@@ -155,13 +158,13 @@ export default function BlogDetail() {
                 <Fragment>
 					<div className="detials">
 						<p>Postingan Selanjutnya</p>
-						<Link onClick={handleScroll} to={`/blog/${nextz.ID}`}>
+						<Link onClick={handleScroll} to={`/blog/${nextz.id}`}>
 							<h4>{nextz.Judul}</h4>
 						</Link>
 					</div>
 					<div className="thumb">
-						<Link onClick={handleScroll} to={`/blog/${nextz.ID}`}>
-							<img className="img-fluid" src={nextz.Gambar} alt="" width={60} height={60} />
+						<Link onClick={handleScroll} to={`/blog/${nextz.id}`}>
+							<img className="img-fluid" src={nextz.SrcGambar} alt="" width={60} height={60} />
 						</Link>
 					</div>
                 </Fragment>   
@@ -173,7 +176,7 @@ export default function BlogDetail() {
             <div className="single-post row">
                 <div className="col-lg-12">
 					<div className="feature-img">
-							{loadingBlog ? <Skeleton width={730} height={550}/> : <img className="img-fluid" src={blog?.Gambar} alt=""/>} 
+							{loadingBlog ? <Skeleton width={730} height={550}/> : <img className="img-fluid" src={blog?.SrcGambar} alt=""/>} 
 					</div>
                 </div>
                 <div className="col-lg-3  col-md-3">

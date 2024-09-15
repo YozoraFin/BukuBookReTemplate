@@ -18,16 +18,16 @@ export default function Confirmation() {
 
     const getData = () => {
         const MySwal = withReactContent(Swal)
-        var formData = new FormData()
-        formData.append('AksesToken', localStorage.getItem('accesstoken'))
-        formData.append('id', param.id)
-        axios.post('http://localhost/bukubook/api/orderapi/getdetail', formData).then((res) => {
+        var object = {
+            AksesToken: localStorage.getItem('accesstoken')
+        }
+        axios.post('http://localhost:5000/order/detail/'+param.id, object).then((res) => {
             if(res.data.status === 200) {
                 setOrderDetail(res.data.data)
             } else {
                 MySwal.fire({
                     icon: 'error',
-                    title: res.data.status,
+                    title: 'Tidak bisa melanjutkan permintaan',
                     text: res.data.message
                 }).then(() => {
                     navigate('/tamu')
@@ -63,7 +63,7 @@ export default function Confirmation() {
                         return(
                             <tr key={`detailorder${index}`}>
                                 <td>
-                                    <p>{detail.Judul}</p>
+                                    <p>{detail.Buku.Judul}</p>
                                 </td>
                                 <td>
                                     <h5>x {detail.Jumlah}</h5>
@@ -110,7 +110,7 @@ export default function Confirmation() {
                                     </tr>
                                     <tr>
                                         <td>Total</td>
-                                        <td>: {loadingOrderDetail ? (<Skeleton width={120} />) : orderDetail?.Total}</td>
+                                        <td>: {loadingOrderDetail ? (<Skeleton width={120} />) : 'Rp '+separator(orderDetail?.Total)}</td>
                                     </tr>
                                 </table>
                             </div>
@@ -179,9 +179,26 @@ export default function Confirmation() {
                                             <h5></h5>
                                         </td>
                                         <td>
-                                            <p>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777'/>) : orderDetail?.Subtotal}</p>
+                                            <p>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777'/>) : `Rp `+separator(orderDetail?.Subtotal)}</p>
                                         </td>
                                     </tr>
+                                    {orderDetail?.Potongan !== 0 ? 
+                                    (
+                                        <tr>
+                                            <td>
+                                                <h4>Potongan</h4>
+                                            </td>
+                                            <td>
+                                                <h5></h5>
+                                            </td>
+                                            <td>
+                                                <p>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777'/>) : `Rp -`+separator(orderDetail?.Potongan)}</p>
+                                            </td>
+                                        </tr>
+                                    )
+                                    :
+                                    ''
+                                    }
                                     <tr>
                                         <td>
                                             <h4>Ongkir</h4>
@@ -190,7 +207,18 @@ export default function Confirmation() {
                                             <h5></h5>
                                         </td>
                                         <td>
-                                            <p>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777' />) : orderDetail?.Ongkir}</p>
+                                            <p>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777' />) : `Rp `+separator(orderDetail?.Ongkir)}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <h4>PPN</h4>
+                                        </td>
+                                        <td>
+                                            <h5></h5>
+                                        </td>
+                                        <td>
+                                            <p>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777' />) : `Rp `+separator(orderDetail?.PPN)}</p>
                                         </td>
                                     </tr>
                                     <tr>
@@ -201,7 +229,7 @@ export default function Confirmation() {
                                             <h5></h5>
                                         </td>
                                         <td>
-                                            <h4>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777' />) : orderDetail?.Total}</h4>
+                                            <h4>{loadingOrderDetail ? (<Skeleton width={140} baseColor='#777777' />) : `Rp `+separator(orderDetail?.Total)}</h4>
                                         </td>
                                     </tr>
                                 </tbody>
