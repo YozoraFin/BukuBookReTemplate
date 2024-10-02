@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../BukuBookNode"
+		},
+		{
+			"path": "../../../ProjectFlutter/BukuBookAplikasi"
+		}
+	],
+	"settings": {}
+}
